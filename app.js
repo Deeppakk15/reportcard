@@ -42,7 +42,6 @@ const searchDropdownCount = document.getElementById('searchDropdownCount');
 // Modal
 const reportModal = document.getElementById('reportModal');
 const modalCloseBtn = document.getElementById('modalCloseBtn');
-const exportCsvBtn = document.getElementById('exportCsvBtn');
 
 // Metric Strip Elements
 const statTotalStudents = document.getElementById('statTotalStudents');
@@ -716,38 +715,7 @@ function closeStudentModal() {
   currentModalStudent = null;
 }
 
-// ==========================================
-// CSV Export
-// ==========================================
-exportCsvBtn.onclick = () => {
-  if (filteredStudents.length === 0) return;
 
-  const totalHeader = isExcludeA1 ? 'Total Assessment (1000 - Excl A1)' : 'Total Assessment (1500)';
-  const headers = ['Overall Rank', 'Branch Rank', 'Group Rank', 'Roll No', 'Name', 'Branch', 'Group', totalHeader, 'Assessment 1', 'Assessment 2', 'Assessment 3', 'Status'];
-  const rows = filteredStudents.map((s) => [
-    s.overallRank || s.scopeRank,
-    s.branchRank || '',
-    s.groupRank || '',
-    `"${s.rollNo || ''}"`,
-    `"${(s.name || '').replace(/"/g, '""')}"`,
-    `"${s.branch || ''}"`,
-    `"${s.resolvedGroup || s.cycle1 || s.cycle2 || ''}"`,
-    s.effectiveAssessment || 0,
-    `"${s.assessment1 || ''}"`,
-    `"${s.assessment2 || ''}"`,
-    `"${s.assessment3 || ''}"`,
-    `"${s.status || ''}"`
-  ]);
-
-  const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `GLBITM_CDC_Assessment_Rankings_${currentBranch}_${isExcludeA1 ? 'ExclA1_' : ''}${Date.now()}.csv`;
-  a.click();
-  URL.revokeObjectURL(url);
-};
 
 // ==========================================
 // Event Listeners
