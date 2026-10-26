@@ -814,12 +814,20 @@ nextPageBtn.onclick = () => {
 
 // Modal and Dropdown close
 modalCloseBtn.onclick = closeStudentModal;
-window.onclick = (e) => {
+
+function handleOutsideClick(e) {
   if (e.target === reportModal) closeStudentModal();
-  if (searchDropdown && !e.target.closest('.search-wrapper')) {
+  if (searchDropdown && searchDropdown.style.display !== 'none' && !e.target.closest('.search-wrapper')) {
     searchDropdown.style.display = 'none';
   }
-};
+}
+
+window.addEventListener('click', handleOutsideClick);
+window.addEventListener('touchstart', (e) => {
+  if (searchDropdown && searchDropdown.style.display !== 'none' && !e.target.closest('.search-wrapper')) {
+    searchDropdown.style.display = 'none';
+  }
+}, { passive: true });
 
 window.onkeydown = (e) => {
   if (e.key === 'Escape') {
@@ -830,11 +838,11 @@ window.onkeydown = (e) => {
   }
 };
 
-searchInput.onfocus = () => {
+searchInput.addEventListener('focus', () => {
   if (searchInput.value.trim() && filteredStudents && filteredStudents.length > 0) {
     if (searchDropdown) searchDropdown.style.display = 'block';
   }
-};
+});
 
 function escapeHtml(str) {
   if (!str) return '';
