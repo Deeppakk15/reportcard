@@ -704,7 +704,7 @@ function openStudentModal(s) {
   // Footer Note
   const footerNote = document.getElementById('mFooterNote');
   if (footerNote) {
-    footerNote.innerHTML = 'Made by student &bull; For mismatched data contact Instagram: <a href="https://instagram.com/hey.admin12" target="_blank" rel="noopener noreferrer" class="insta-link-badge">@hey.admin12</a>';
+    footerNote.innerHTML = 'Made by student &bull; For mismatched data contact Instagram: <a href="https://instagram.com/hey.admindkkk" target="_blank" rel="noopener noreferrer" class="insta-link-badge">@hey.admindkkk</a>';
   }
 
   reportModal.style.display = 'flex';
