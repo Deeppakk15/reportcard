@@ -273,7 +273,7 @@ body {
 .podium-card {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
-  padding: 20px;
+  padding: 16px 18px;
   border-radius: 8px;
   position: relative;
   transition: var(--transition);
@@ -305,14 +305,14 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .podium-rank-tag {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
-  padding: 3px 8px;
+  padding: 2px 7px;
   border-radius: 4px;
 }
 
@@ -333,26 +333,26 @@ body {
 
 .podium-branch-tag {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 10px;
   color: var(--ink-secondary);
   background: var(--bg-badge);
-  padding: 2px 7px;
+  padding: 2px 6px;
   border-radius: 3px;
   border: 1px solid var(--border-subtle);
 }
 
 .podium-name {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--ink-primary);
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .podium-roll {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 11px;
   color: var(--ink-muted);
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 
 .podium-metrics {
@@ -360,13 +360,13 @@ body {
   justify-content: space-between;
   align-items: flex-end;
   border-top: 1px solid var(--border-subtle);
-  padding-top: 12px;
-  margin-top: 10px;
+  padding-top: 10px;
+  margin-top: 8px;
 }
 
 .podium-stat-val {
   font-family: var(--font-mono);
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--accent-vermilion);
 }
@@ -1178,14 +1178,14 @@ body {
   border: 1px solid var(--border-strong);
   border-radius: 12px;
   width: 100%;
-  max-width: 800px;
+  max-width: 620px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
   animation: modalEnter 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
 }
 
 .modal-card.modal-sm {
-  max-width: 480px;
+  max-width: 440px;
 }
 
 @keyframes modalEnter {
@@ -1194,7 +1194,7 @@ body {
 }
 
 .modal-header {
-  padding: 20px 24px;
+  padding: 16px 20px;
   border-bottom: 1px solid var(--border-subtle);
   display: flex;
   justify-content: space-between;
@@ -1212,10 +1212,10 @@ body {
 }
 
 .modal-title {
-  font-size: 22px;
+  font-size: 19px;
   font-weight: 700;
   color: var(--ink-primary);
-  margin-top: 4px;
+  margin-top: 3px;
 }
 
 .modal-sub {
@@ -1229,7 +1229,7 @@ body {
   background: none;
   border: none;
   color: var(--ink-muted);
-  font-size: 26px;
+  font-size: 24px;
   cursor: pointer;
   line-height: 1;
 }
@@ -1239,8 +1239,8 @@ body {
 }
 
 .modal-body {
-  padding: 24px;
-  max-height: 80vh;
+  padding: 18px 20px;
+  max-height: 84vh;
   overflow-y: auto;
 }
 
@@ -1250,7 +1250,7 @@ body {
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .modal-branch-pill {
@@ -1280,26 +1280,26 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 16px;
   background: linear-gradient(135deg, rgba(184, 67, 47, 0.08) 0%, rgba(20, 19, 18, 0.8) 100%);
   border: 1.5px solid rgba(184, 67, 47, 0.35);
-  border-radius: 12px;
-  padding: 20px 24px;
-  margin-bottom: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 
 .m-hero-left {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 .m-hero-label {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   color: var(--ink-secondary);
   text-transform: uppercase;
 }
@@ -1307,11 +1307,11 @@ body {
 .m-hero-number-wrap {
   display: flex;
   align-items: baseline;
-  gap: 8px;
+  gap: 6px;
 }
 
 .m-hero-score-val {
-  font-size: 44px;
+  font-size: 32px;
   font-weight: 800;
   line-height: 1;
   color: var(--accent-vermilion);
@@ -1319,7 +1319,7 @@ body {
 }
 
 .m-hero-score-max {
-  font-size: 18px;
+  font-size: 14px;
   color: var(--ink-muted);
   font-weight: 500;
 }
@@ -1328,23 +1328,23 @@ body {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 8px;
-  min-width: 140px;
+  gap: 6px;
+  min-width: 110px;
 }
 
 .m-hero-pct-pill {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--ink-primary);
   background: var(--bg-surface-elevated);
-  padding: 4px 14px;
+  padding: 3px 12px;
   border-radius: 9999px;
   border: 1px solid var(--border-subtle);
 }
 
 .m-hero-progress-track {
   width: 100%;
-  height: 6px;
+  height: 5px;
   background: var(--bg-canvas);
   border-radius: 3px;
   overflow: hidden;
@@ -1360,30 +1360,30 @@ body {
 /* Modal Section Label */
 .modal-section-label {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink-muted);
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
-/* Assessment Breakdown Big Cards (3-column) */
+/* Assessment Breakdown Cards (3-column) */
 .modal-score-cards-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-  margin-bottom: 24px;
+  gap: 10px;
+  margin-bottom: 16px;
 }
 
 .m-score-card {
   background: var(--bg-surface-elevated);
   border: 1px solid var(--border-subtle);
-  border-radius: 10px;
-  padding: 16px;
+  border-radius: 8px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   transition: var(--transition);
 }
 
@@ -1405,13 +1405,13 @@ body {
 
 .m-card-title {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   color: var(--ink-secondary);
 }
 
 .m-card-score {
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 800;
   color: var(--ink-primary);
   line-height: 1.1;
@@ -1419,7 +1419,7 @@ body {
 
 .m-card-sub {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 10px;
   color: var(--ink-muted);
 }
 
@@ -1427,36 +1427,36 @@ body {
 .modal-rank-cards-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-  margin-bottom: 24px;
+  gap: 10px;
+  margin-bottom: 16px;
 }
 
 .m-rank-card {
   background: var(--bg-surface-elevated);
   border: 1px solid var(--border-subtle);
-  border-radius: 10px;
-  padding: 16px;
+  border-radius: 8px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 .m-rank-label {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   color: var(--ink-secondary);
 }
 
 .m-rank-display {
-  font-size: 26px;
+  font-size: 20px;
   font-weight: 800;
   line-height: 1.2;
 }
 
 .m-rank-context {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 10px;
   color: var(--ink-muted);
 }
 
@@ -1464,29 +1464,29 @@ body {
 .modal-meta-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
+  gap: 10px;
   background: var(--bg-surface-elevated);
   border: 1px solid var(--border-subtle);
-  border-radius: 10px;
-  padding: 14px 18px;
-  margin-bottom: 20px;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
 }
 
 .m-meta-stat {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .m-meta-label {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   color: var(--ink-muted);
 }
 
 .m-meta-val {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--ink-primary);
 }
@@ -1499,8 +1499,8 @@ body {
 }
 
 .modal-profiles {
-  margin-top: 10px;
-  padding-top: 16px;
+  margin-top: 8px;
+  padding-top: 12px;
   border-top: 1px solid var(--border-subtle);
   display: flex;
   justify-content: space-between;
@@ -1509,21 +1509,21 @@ body {
 
 .profiles-list {
   display: flex;
-  gap: 10px;
+  gap: 8px;
 }
 
 .profile-link-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
+  padding: 5px 10px;
   border-radius: 6px;
   background: var(--bg-surface-elevated);
   border: 1px solid var(--border-subtle);
   color: var(--ink-primary);
   text-decoration: none;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
   transition: var(--transition);
 }
@@ -1534,12 +1534,12 @@ body {
 }
 
 .modal-footer-note {
-  margin-top: 20px;
-  padding: 10px;
+  margin-top: 14px;
+  padding: 8px 12px;
   background: rgba(224, 83, 60, 0.08);
   border: 1px solid rgba(224, 83, 60, 0.2);
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--accent-vermilion);
   text-align: center;
 }
@@ -1992,95 +1992,172 @@ body {
 
   /* Modal Mobile */
   .modal-backdrop {
-    padding: 8px;
-    align-items: flex-end;
+    padding: 12px;
+    align-items: center;
+    justify-content: center;
   }
 
   .modal-card {
     width: 100%;
-    max-width: 100%;
-    max-height: 94vh;
-    border-radius: 16px 16px 0 0;
+    max-width: 420px;
+    max-height: 86vh;
+    border-radius: 12px;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7);
   }
 
   .modal-header {
-    padding: 16px;
+    padding: 12px 14px;
+  }
+
+  .modal-top-tags {
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+
+  .modal-badge {
+    font-size: 8.5px;
+  }
+
+  .modal-branch-pill,
+  .modal-group-pill {
+    font-size: 9px;
+    padding: 1px 6px;
   }
 
   .modal-title {
+    font-size: 16px;
+    margin-top: 2px;
+  }
+
+  .modal-sub {
+    font-size: 11px;
+  }
+
+  .modal-close-btn {
     font-size: 20px;
   }
 
   .modal-body {
-    padding: 14px;
+    padding: 12px 14px;
+    max-height: calc(86vh - 65px);
   }
 
   .modal-hero-score-card {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 14px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+  }
+
+  .m-hero-left {
+    gap: 2px;
+  }
+
+  .m-hero-label {
+    font-size: 8.5px;
   }
 
   .m-hero-score-val {
-    font-size: 34px;
+    font-size: 22px;
+  }
+
+  .m-hero-score-max {
+    font-size: 11px;
   }
 
   .m-hero-right {
-    align-items: flex-start;
-    width: 100%;
-    min-width: 0;
+    align-items: flex-end;
+    width: auto;
+    min-width: 80px;
+    gap: 4px;
   }
 
   .m-hero-pct-pill {
-    font-size: 16px;
-    padding: 3px 10px;
+    font-size: 13px;
+    padding: 2px 8px;
+  }
+
+  .m-hero-progress-track {
+    height: 4px;
+  }
+
+  .modal-section-label {
+    font-size: 8.5px;
+    margin-bottom: 5px;
   }
 
   .modal-score-cards-grid,
   .modal-rank-cards-grid,
   .modal-meta-row {
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: 6px;
+    margin-bottom: 10px;
   }
 
   .m-score-card,
   .m-rank-card {
-    padding: 10px 8px;
+    padding: 7px 6px;
+    border-radius: 6px;
+    gap: 2px;
   }
 
   .m-card-score,
   .m-rank-display {
-    font-size: 18px;
+    font-size: 15px;
   }
 
   .m-card-title,
   .m-rank-label,
   .m-meta-label {
-    font-size: 9px;
+    font-size: 8px;
+    letter-spacing: 0;
+  }
+
+  .m-card-sub,
+  .m-rank-context {
+    font-size: 8px;
+  }
+
+  .modal-meta-row {
+    padding: 7px 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
   }
 
   .m-meta-val {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .modal-profiles {
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
+    gap: 6px;
+    padding-top: 8px;
+    margin-bottom: 6px;
   }
 
   .profiles-list {
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 4px;
     width: 100%;
   }
 
   .profile-link-btn {
-    font-size: 11px;
-    padding: 6px 10px;
+    font-size: 10px;
+    padding: 4px 8px;
+    border-radius: 4px;
     flex: 1;
     justify-content: center;
+  }
+
+  .modal-footer-note {
+    font-size: 10px;
+    padding: 6px 8px;
+    margin-top: 6px;
+    border-radius: 6px;
   }
 
   /* Footer Mobile */
@@ -2122,8 +2199,18 @@ body {
   .modal-score-cards-grid,
   .modal-rank-cards-grid,
   .modal-meta-row {
-    grid-template-columns: 1fr;
-    gap: 8px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+  }
+
+  .m-score-card,
+  .m-rank-card {
+    padding: 6px 3px;
+  }
+
+  .m-card-score,
+  .m-rank-display {
+    font-size: 13px;
   }
 
   .unofficial-branding {
