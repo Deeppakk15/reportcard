@@ -532,6 +532,9 @@ function renderTable() {
     const isTopBranch = s.branchRank === 1 ? ' top-1' : '';
     const isTopGroup = s.groupRank === 1 ? ' top-1' : '';
 
+    tr.className = 'ranking-row';
+    tr.onclick = () => handleStudentClick(s.rollNo);
+
     // Group short form
     let groupShort = s.resolvedGroup || s.cycle1 || s.cycle2 || '-';
     if (groupShort.includes('Section ')) {
@@ -544,14 +547,15 @@ function renderTable() {
       </td>
       <td class="col-student">
         <div class="student-name-row">
-          <a href="javascript:void(0)" class="student-name-link" onclick="handleStudentClick('${s.rollNo}')">
+          <span class="student-name-link">
             ${escapeHtml(s.name || 'Unknown')}
-          </a>
+          </span>
           <span class="mobile-branch-pill">${escapeHtml(s.branch || '-')}</span>
         </div>
         <div class="student-roll font-mono">${escapeHtml(s.rollNo || '-')}</div>
-        
-        <!-- Mobile Unscrollable Details Box (Hidden on Laptop) -->
+      </td>
+      <!-- Mobile-only full-width details row (starts directly below rank and extends to end) -->
+      <td class="col-mobile-details">
         <div class="mobile-details-box">
           <div class="mob-meta-row font-mono">
             <span class="mob-stat-item">Grp: <strong>${escapeHtml(groupShort)}</strong></span>
@@ -602,9 +606,6 @@ function renderTable() {
       </td>
       <td class="col-group-rank font-mono">
         <span class="rank-sub-badge${isTopGroup}" title="Rank #${s.groupRank} of ${s.groupTotal || '-'} in ${escapeHtml(s.resolvedGroup || '')}">${groupRankStr}</span>
-      </td>
-      <td class="col-actions">
-        <button class="btn-card-view" onclick="handleStudentClick('${s.rollNo}')">View Card</button>
       </td>
     `;
 
