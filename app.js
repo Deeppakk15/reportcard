@@ -532,15 +532,44 @@ function renderTable() {
     const isTopBranch = s.branchRank === 1 ? ' top-1' : '';
     const isTopGroup = s.groupRank === 1 ? ' top-1' : '';
 
+    // Group short form
+    let groupShort = s.resolvedGroup || s.cycle1 || s.cycle2 || '-';
+    if (groupShort.includes('Section ')) {
+      groupShort = groupShort.replace('Section ', '').trim();
+    }
+
     tr.innerHTML = `
       <td class="col-rank">
         <span class="${rankClass}">#${rank}</span>
       </td>
       <td class="col-student">
-        <a href="javascript:void(0)" class="student-name-link" onclick="handleStudentClick('${s.rollNo}')">
-          ${escapeHtml(s.name || 'Unknown')}
-        </a>
-        <span class="student-roll">${escapeHtml(s.rollNo || '-')}</span>
+        <div class="student-name-row">
+          <a href="javascript:void(0)" class="student-name-link" onclick="handleStudentClick('${s.rollNo}')">
+            ${escapeHtml(s.name || 'Unknown')}
+          </a>
+          <span class="mobile-branch-pill">${escapeHtml(s.branch || '-')}</span>
+        </div>
+        <div class="student-roll font-mono">${escapeHtml(s.rollNo || '-')}</div>
+        
+        <!-- Mobile Unscrollable Details Box (Hidden on Laptop) -->
+        <div class="mobile-details-box">
+          <div class="mob-meta-row font-mono">
+            <span class="mob-stat-item">Grp: <strong>${escapeHtml(groupShort)}</strong></span>
+            <span class="mob-stat-sep">•</span>
+            <span class="mob-stat-item highlight-tot">Tot: <strong>${totalA}</strong><span class="mob-tot-max">/${maxPossible}</span></span>
+            <span class="mob-stat-sep">•</span>
+            <span class="mob-stat-item">BRank: <strong>${branchRankStr}</strong></span>
+            <span class="mob-stat-sep">•</span>
+            <span class="mob-stat-item">GRank: <strong>${groupRankStr}</strong></span>
+          </div>
+          <div class="mob-scores-row font-mono">
+            <span class="mob-score-val">A1: ${isExcludeA1 ? '<span class="score-excluded">' + a1Str + '</span>' : a1Str}</span>
+            <span class="mob-score-sep">|</span>
+            <span class="mob-score-val">A2: ${a2Str}</span>
+            <span class="mob-score-sep">|</span>
+            <span class="mob-score-val">A3: ${a3Str}</span>
+          </div>
+        </div>
       </td>
       <td class="col-branch">
         <span class="badge-branch">${escapeHtml(s.branch || '-')}</span>
