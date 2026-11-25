@@ -43,10 +43,11 @@ const searchDropdownCount = document.getElementById('searchDropdownCount');
 const reportModal = document.getElementById('reportModal');
 const modalCloseBtn = document.getElementById('modalCloseBtn');
 
-// Updated Coding Rank Welcome Popup
-const updatePopupModal = document.getElementById('updatePopupModal');
-const updatePopupCloseBtn = document.getElementById('updatePopupCloseBtn');
-const updatePopupExploreBtn = document.getElementById('updatePopupExploreBtn');
+// Updated Coding Rank Top Toast Popup
+const updateToast = document.getElementById('updateToast');
+const updateToastSub = document.getElementById('updateToastSub');
+const updateToastCloseBtn = document.getElementById('updateToastCloseBtn');
+let updateToastTimer = null;
 
 // Metric Strip Elements
 const statTotalStudents = document.getElementById('statTotalStudents');
@@ -825,21 +826,35 @@ function closeStudentModal() {
 }
 
 function openUpdatePopup(rankedTotal, totalStudents) {
-  if (!updatePopupModal) return;
-  const unrankedTotal = Math.max(totalStudents - rankedTotal, 0);
-  const uRanked = document.getElementById('uRankedCount');
-  const uUnranked = document.getElementById('uUnrankedCount');
-  const uTotal = document.getElementById('uTotalCount');
-  if (uRanked) uRanked.textContent = rankedTotal.toLocaleString();
-  if (uUnranked) uUnranked.textContent = unrankedTotal.toLocaleString();
-  if (uTotal) uTotal.textContent = totalStudents.toLocaleString();
-  updatePopupModal.style.display = 'flex';
+  if (!updateToast) return;
+  if (updateToastSub) {
+    updateToastSub.textContent = `${rankedTotal.toLocaleString()} Ranked • ${totalStudents.toLocaleString()} Synced`;
+  }
+  updateToast.style.display = 'block';
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      updateToast.classList.add('is-visible');
+    });
+  });
+
+  if (updateToastTimer) clearTimeout(updateToastTimer);
+  updateToastTimer = setTimeout(() => {
+    closeUpdatePopup();
+  }, 4500);
 }
 
 function closeUpdatePopup() {
-  if (updatePopupModal) {
-    updatePopupModal.style.display = 'none';
+  if (!updateToast) return;
+  if (updateToastTimer) {
+    clearTimeout(updateToastTimer);
+    updateToastTimer = null;
   }
+  updateToast.classList.remove('is-visible');
+  setTimeout(() => {
+    if (!updateToast.classList.contains('is-visible')) {
+      updateToast.style.display = 'none';
+    }
+  }, 360);
 }
 
 
@@ -942,12 +957,10 @@ nextPageBtn.onclick = () => {
 
 // Modal and Dropdown close
 modalCloseBtn.onclick = closeStudentModal;
-if (updatePopupCloseBtn) updatePopupCloseBtn.onclick = closeUpdatePopup;
-if (updatePopupExploreBtn) updatePopupExploreBtn.onclick = closeUpdatePopup;
+if (updateToastCloseBtn) updateToastCloseBtn.onclick = closeUpdatePopup;
 
 function handleOutsideClick(e) {
   if (e.target === reportModal) closeStudentModal();
-  if (e.target === updatePopupModal) closeUpdatePopup();
   if (searchDropdown && searchDropdown.style.display !== 'none' && !e.target.closest('.search-wrapper')) {
     searchDropdown.style.display = 'none';
   }
