@@ -45,7 +45,6 @@ const modalCloseBtn = document.getElementById('modalCloseBtn');
 
 // Updated Coding Rank Top Toast Popup
 const updateToast = document.getElementById('updateToast');
-const updateToastSub = document.getElementById('updateToastSub');
 const updateToastCloseBtn = document.getElementById('updateToastCloseBtn');
 let updateToastTimer = null;
 
@@ -162,15 +161,10 @@ async function init() {
     console.log(`Loaded ${allStudents.length} students`);
     
     calculateAllRanks();
-    const rankedTotal = allStudents.filter(s => s.codingRank !== null).length;
-    const statusText = document.getElementById('statusText');
-    if (statusText) {
-      statusText.textContent = `${rankedTotal.toLocaleString()} Ranked • ${allStudents.length.toLocaleString()} Students`;
-    }
     populateGroupFilter();
     updateBatchMetrics(allStudents);
     applyFiltersAndSort();
-    openUpdatePopup(rankedTotal, allStudents.length);
+    openUpdatePopup();
   } catch (err) {
     console.error('Data load error:', err);
     resultsCount.textContent = 'Error loading student data. Check console.';
@@ -362,13 +356,17 @@ function updateScopeTag(query) {
   if (isExcludeA1) {
     scope += ' • [A1 Excluded]';
   }
-  const rankedInScope = filteredStudents.filter(s => s.codingRank !== null).length;
   if (query) {
     currentScopeTag.textContent = `${scope} • Query: "${query}"`;
-    resultsCount.textContent = `${filteredStudents.length} Found (${rankedInScope} Ranked)`;
+    resultsCount.style.display = 'inline-flex';
+    resultsCount.textContent = `${filteredStudents.length} Found`;
+  } else if (currentBranch !== 'ALL' || currentGroup !== 'ALL') {
+    currentScopeTag.textContent = scope;
+    resultsCount.style.display = 'inline-flex';
+    resultsCount.textContent = `${filteredStudents.length} Students`;
   } else {
     currentScopeTag.textContent = scope;
-    resultsCount.textContent = `${rankedInScope} Ranked • ${filteredStudents.length} Students`;
+    resultsCount.style.display = 'none';
   }
 }
 
@@ -825,11 +823,8 @@ function closeStudentModal() {
   currentModalStudent = null;
 }
 
-function openUpdatePopup(rankedTotal, totalStudents) {
+function openUpdatePopup() {
   if (!updateToast) return;
-  if (updateToastSub) {
-    updateToastSub.textContent = `${rankedTotal.toLocaleString()} Ranked • ${totalStudents.toLocaleString()} Synced`;
-  }
   updateToast.style.display = 'block';
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
