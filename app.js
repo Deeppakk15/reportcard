@@ -43,6 +43,11 @@ const searchDropdownCount = document.getElementById('searchDropdownCount');
 const reportModal = document.getElementById('reportModal');
 const modalCloseBtn = document.getElementById('modalCloseBtn');
 
+// Updated Coding Rank Welcome Popup
+const updatePopupModal = document.getElementById('updatePopupModal');
+const updatePopupCloseBtn = document.getElementById('updatePopupCloseBtn');
+const updatePopupExploreBtn = document.getElementById('updatePopupExploreBtn');
+
 // Metric Strip Elements
 const statTotalStudents = document.getElementById('statTotalStudents');
 const statHighestScore = document.getElementById('statHighestScore');
@@ -164,6 +169,7 @@ async function init() {
     populateGroupFilter();
     updateBatchMetrics(allStudents);
     applyFiltersAndSort();
+    openUpdatePopup(rankedTotal, allStudents.length);
   } catch (err) {
     console.error('Data load error:', err);
     resultsCount.textContent = 'Error loading student data. Check console.';
@@ -818,6 +824,24 @@ function closeStudentModal() {
   currentModalStudent = null;
 }
 
+function openUpdatePopup(rankedTotal, totalStudents) {
+  if (!updatePopupModal) return;
+  const unrankedTotal = Math.max(totalStudents - rankedTotal, 0);
+  const uRanked = document.getElementById('uRankedCount');
+  const uUnranked = document.getElementById('uUnrankedCount');
+  const uTotal = document.getElementById('uTotalCount');
+  if (uRanked) uRanked.textContent = rankedTotal.toLocaleString();
+  if (uUnranked) uUnranked.textContent = unrankedTotal.toLocaleString();
+  if (uTotal) uTotal.textContent = totalStudents.toLocaleString();
+  updatePopupModal.style.display = 'flex';
+}
+
+function closeUpdatePopup() {
+  if (updatePopupModal) {
+    updatePopupModal.style.display = 'none';
+  }
+}
+
 
 
 // ==========================================
@@ -918,9 +942,12 @@ nextPageBtn.onclick = () => {
 
 // Modal and Dropdown close
 modalCloseBtn.onclick = closeStudentModal;
+if (updatePopupCloseBtn) updatePopupCloseBtn.onclick = closeUpdatePopup;
+if (updatePopupExploreBtn) updatePopupExploreBtn.onclick = closeUpdatePopup;
 
 function handleOutsideClick(e) {
   if (e.target === reportModal) closeStudentModal();
+  if (e.target === updatePopupModal) closeUpdatePopup();
   if (searchDropdown && searchDropdown.style.display !== 'none' && !e.target.closest('.search-wrapper')) {
     searchDropdown.style.display = 'none';
   }
@@ -936,6 +963,7 @@ window.addEventListener('touchstart', (e) => {
 window.onkeydown = (e) => {
   if (e.key === 'Escape') {
     closeStudentModal();
+    closeUpdatePopup();
     if (searchDropdown) {
       searchDropdown.style.display = 'none';
     }

@@ -189,6 +189,53 @@
       </div>
     </footer>
 
+    <!-- Updated Coding Rank Popup (Shown on Open) -->
+    <div class="modal-backdrop" id="updatePopupModal" style="display: none;">
+      <div class="modal-card modal-update-card">
+        <div class="modal-header">
+          <div class="modal-header-text">
+            <div class="modal-top-tags">
+              <span class="badge-updated-small">
+                <span class="pulse-dot-green"></span>
+                <span>UPDATED</span>
+              </span>
+              <span class="modal-badge">CODING RANK SYNCED</span>
+            </div>
+            <h2 class="modal-title update-popup-title">Updated Coding Rank Live</h2>
+            <p class="modal-sub">Synced with official college CDC report card data</p>
+          </div>
+          <button class="modal-close-btn" id="updatePopupCloseBtn" aria-label="Close update popup">&times;</button>
+        </div>
+
+        <div class="modal-body update-popup-body">
+          <div class="update-stats-strip font-mono">
+            <div class="update-stat-item">
+              <span class="update-stat-val highlight-accent" id="uRankedCount">811</span>
+              <span class="update-stat-lbl">RANKED (#1–#851)</span>
+            </div>
+            <div class="update-stat-item">
+              <span class="update-stat-val" id="uUnrankedCount">833</span>
+              <span class="update-stat-lbl">NO RANK</span>
+            </div>
+            <div class="update-stat-item">
+              <span class="update-stat-val" id="uTotalCount">1,644</span>
+              <span class="update-stat-lbl">TOTAL STUDENTS</span>
+            </div>
+          </div>
+
+          <ul class="update-highlights-list">
+            <li><strong>Exact Coding Rank:</strong> Overall, Branch, and Group ranks are recalculated directly from the official Coding Rank.</li>
+            <li><strong>Student Card Updated:</strong> Coding Rank is now shown inside every student's card along with CP Score &amp; Assessments.</li>
+            <li><strong>Unranked Students:</strong> Students without an official rank are marked cleanly as <code>No Rank</code>.</li>
+          </ul>
+
+          <div class="update-popup-actions">
+            <button class="btn-update-cta" id="updatePopupExploreBtn">View Coding Leaderboard</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Student Detail Modal (Unofficial Student Record) -->
     <div class="modal-backdrop" id="reportModal" style="display: none;">
       <div class="modal-card">
