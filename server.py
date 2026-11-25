@@ -26,6 +26,15 @@ def parse_num(val):
     except:
         return 0.0
 
+def parse_rank(val):
+    if not val or str(val).strip() == "-":
+        return None
+    try:
+        n = int(float(str(val).strip()))
+        return n if n > 0 else None
+    except:
+        return None
+
 def live_fetch(roll_no):
     payload_str = json.dumps(["getStudentReport", json.dumps([str(roll_no)]), None, [0], None, None, 1, 0])
     try:
@@ -49,6 +58,7 @@ def live_fetch(roll_no):
                         st["cp_score_num"] = parse_num(st.get("cpScore"))
                         st["comm_score_num"] = parse_num(st.get("communicationScore"))
                         st["odd_attendance_num"] = parse_num(st.get("oddAttendance"))
+                        st["coding_rank_num"] = parse_rank(st.get("collegeCodingRank"))
                         return {"success": True, "student": st}
                     else:
                         return {"success": False, "message": data.get("message", "Student not found")}

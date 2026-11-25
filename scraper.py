@@ -29,11 +29,20 @@ def parse_score(val):
     except:
         return 0.0
 
-def fetch_single(roll_no, retries=2):
+def parse_rank(val):
+    if not val or str(val).strip() == "-":
+        return None
+    try:
+        n = int(float(str(val).strip()))
+        return n if n > 0 else None
+    except:
+        return None
+
+def fetch_single(roll_no, retries=3):
     payload_str = json.dumps(["getStudentReport", json.dumps([str(roll_no)]), None, [0], None, None, 1, 0])
     for attempt in range(retries):
         try:
-            resp = requests.post(URL, headers=HEADERS, data={"request": payload_str}, timeout=8)
+            resp = requests.post(URL, headers=HEADERS, data={"request": payload_str}, timeout=10)
             text = resp.text
             idx = text.find("[")
             if idx != -1:
@@ -54,6 +63,7 @@ def fetch_single(roll_no, retries=2):
                             st["cp_score_num"] = parse_score(st.get("cpScore"))
                             st["comm_score_num"] = parse_score(st.get("communicationScore"))
                             st["odd_attendance_num"] = parse_score(st.get("oddAttendance"))
+                            st["coding_rank_num"] = parse_rank(st.get("collegeCodingRank"))
                             return st
                         else:
                             # Explicitly not found / failed from server
@@ -73,7 +83,7 @@ def save_students(students_list, path=DATA_PATH):
     else:
         os.rename(temp_path, path)
 
-def scrape_branches(branch_configs):
+def scrape_branches(branch_configs, refresh=False):
     all_students_dict = {}
     
     # Load existing data if available
@@ -88,17 +98,25 @@ def scrape_branches(branch_configs):
         except Exception as e:
             print(f"Notice: Failed to load existing data ({e}). Starting fresh.")
 
-    # Determine missing roll numbers
+    # Determine rolls to fetch
     rolls_to_fetch = []
+    seen = set()
+    if refresh:
+        for r in sorted(all_students_dict.keys()):
+            rolls_to_fetch.append(r)
+            seen.add(r)
     for code, max_r in branch_configs.items():
         for i in range(1, max_r + 1):
             r = f"240192{code}{i:04d}"
-            if r not in all_students_dict:
+            if r in seen:
+                continue
+            if refresh or r not in all_students_dict:
                 rolls_to_fetch.append(r)
+                seen.add(r)
 
     print(f"Total target rolls in config: {sum(branch_configs.values())}")
     print(f"Already cached: {len(all_students_dict)}")
-    print(f"Missing rolls to fetch: {len(rolls_to_fetch)}")
+    print(f"Rolls to fetch ({'refresh' if refresh else 'missing only'}): {len(rolls_to_fetch)}")
 
     if not rolls_to_fetch:
         print("All target rolls are already cached! No scraping needed.")
@@ -106,7 +124,7 @@ def scrape_branches(branch_configs):
 
     print(f"Starting concurrent fetch with 35 workers...")
     start_time = time.time()
-    newly_found = 0
+    updated_count = 0
     checked_count = 0
     total_to_fetch = len(rolls_to_fetch)
 
@@ -117,9 +135,9 @@ def scrape_branches(branch_configs):
             st = future.result()
             if st and st.get("name"):
                 all_students_dict[st["rollNo"]] = st
-                newly_found += 1
-                if newly_found % 25 == 0:
-                    print(f"Progress: [{checked_count}/{total_to_fetch}] Found +{newly_found} new students (Total so far: {len(all_students_dict)})")
+                updated_count += 1
+                if updated_count % 50 == 0:
+                    print(f"Progress: [{checked_count}/{total_to_fetch}] Updated/Found {updated_count} students (Total in DB: {len(all_students_dict)})")
                     save_students(sorted(all_students_dict.values(), key=lambda x: x.get("rollNo", "")))
 
     elapsed = time.time() - start_time
@@ -127,7 +145,7 @@ def scrape_branches(branch_configs):
     save_students(final_list)
 
     print(f"\nScraping completed in {elapsed:.1f}s!")
-    print(f"New students found: {newly_found}")
+    print(f"Students updated/found: {updated_count}")
     print(f"Total students now in database: {len(final_list)}")
 
     # Print breakdown by branch
@@ -140,6 +158,7 @@ def scrape_branches(branch_configs):
     return final_list
 
 if __name__ == "__main__":
+    refresh_mode = "--refresh" in sys.argv
     # Complete branch definitions for batch 2024 at GLBITM
     branches = {
         "010": 372, # CSE (approx 368 actual)
@@ -150,4 +169,4 @@ if __name__ == "__main__":
         "169": 75,  # CSH (approx 72 actual)
         "031": 145, # ECE (approx 142 actual)
     }
-    scrape_branches(branches)
+    scrape_branches(branches, refresh=refresh_mode)

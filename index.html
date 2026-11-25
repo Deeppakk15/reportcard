@@ -113,9 +113,11 @@
         <div class="filter-group">
           <span class="control-label">RANK BY</span>
           <select id="sortBy" class="select-control">
-            <option value="total_assessment" selected>Total Assessment Marks (High &rarr; Low)</option>
+            <option value="codingRank" selected>Coding Rank (Top &rarr; Low)</option>
             <option value="branchRank">Branch Rank (Top &rarr; Low)</option>
             <option value="groupRank">Group Rank (Top &rarr; Low)</option>
+            <option value="cp_score_num">CP Score (High &rarr; Low)</option>
+            <option value="total_assessment">Total Assessment Marks (High &rarr; Low)</option>
             <option value="assessment3_num">Assessment 3 Marks</option>
             <option value="assessment2_num">Assessment 2 Marks</option>
             <option value="assessment1_num">Assessment 1 Marks</option>
@@ -138,10 +140,11 @@
         <table class="ranking-table" id="rankingTable">
           <thead>
             <tr>
-              <th class="col-rank">OVERALL</th>
+              <th class="col-rank sortable" data-sort="codingRank">CODING RANK</th>
               <th class="col-student">STUDENT</th>
               <th class="col-branch">BRANCH</th>
               <th class="col-group">GROUP</th>
+              <th class="col-cp sortable" data-sort="cp_score_num">CP SCORE</th>
               <th class="col-assessment sortable" data-sort="total_assessment">TOTAL MARKS</th>
               <th class="col-a1 sortable" data-sort="assessment1_num">ASSESSMENT 1</th>
               <th class="col-a2 sortable" data-sort="assessment2_num">ASSESSMENT 2</th>
@@ -203,6 +206,42 @@
         </div>
 
         <div class="modal-body" id="modalBody">
+          <!-- Cohort Rankings (Big Rank Cards) -->
+          <div class="modal-section-label">CODING RANKINGS</div>
+          <div class="modal-rank-cards-grid">
+            <div class="m-rank-card">
+              <span class="m-rank-label">OVERALL BATCH RANK</span>
+              <div class="m-rank-display highlight-accent font-mono" id="mOverallRankVal">No Rank</div>
+              <span class="m-rank-context" id="mOverallRankSub">College Coding Rank</span>
+            </div>
+            <div class="m-rank-card">
+              <span class="m-rank-label">BRANCH RANK</span>
+              <div class="m-rank-display highlight-accent font-mono" id="mBranchRankVal">No Rank</div>
+              <span class="m-rank-context" id="mBranchRankSub">in Branch</span>
+            </div>
+            <div class="m-rank-card">
+              <span class="m-rank-label">GROUP RANK</span>
+              <div class="m-rank-display highlight-accent font-mono" id="mGroupRankVal">No Rank</div>
+              <span class="m-rank-context" id="mGroupRankSub">in Group</span>
+            </div>
+          </div>
+
+          <!-- Performance Scores -->
+          <div class="modal-meta-row">
+            <div class="m-meta-stat">
+              <span class="m-meta-label">CP SCORE</span>
+              <span class="m-meta-val font-mono" id="mCP">--%</span>
+            </div>
+            <div class="m-meta-stat">
+              <span class="m-meta-label">CODING RANK</span>
+              <span class="m-meta-val font-mono" id="mCodingRank">No Rank</span>
+            </div>
+            <div class="m-meta-stat">
+              <span class="m-meta-label">STATUS</span>
+              <span class="m-meta-val" id="mStatus">Active</span>
+            </div>
+          </div>
+
           <!-- Big Hero Assessment Total Card -->
           <div class="modal-hero-score-card">
             <div class="m-hero-left">
@@ -237,42 +276,6 @@
               <span class="m-card-title">ASSESSMENT 3</span>
               <div class="m-card-score font-mono" id="mA3Val">--</div>
               <span class="m-card-sub">Max: 500</span>
-            </div>
-          </div>
-
-          <!-- Cohort Rankings (Big Rank Cards) -->
-          <div class="modal-section-label">COHORT RANKINGS</div>
-          <div class="modal-rank-cards-grid">
-            <div class="m-rank-card">
-              <span class="m-rank-label">OVERALL BATCH RANK</span>
-              <div class="m-rank-display highlight-accent font-mono" id="mOverallRankVal">#--</div>
-              <span class="m-rank-context">of 1,644 Students</span>
-            </div>
-            <div class="m-rank-card">
-              <span class="m-rank-label">BRANCH RANK</span>
-              <div class="m-rank-display highlight-accent font-mono" id="mBranchRankVal">#--</div>
-              <span class="m-rank-context" id="mBranchRankSub">in Branch</span>
-            </div>
-            <div class="m-rank-card">
-              <span class="m-rank-label">GROUP RANK</span>
-              <div class="m-rank-display highlight-accent font-mono" id="mGroupRankVal">#--</div>
-              <span class="m-rank-context" id="mGroupRankSub">in Group</span>
-            </div>
-          </div>
-
-          <!-- Performance Scores -->
-          <div class="modal-meta-row">
-            <div class="m-meta-stat">
-              <span class="m-meta-label">CP SCORE</span>
-              <span class="m-meta-val font-mono" id="mCP">--%</span>
-            </div>
-            <div class="m-meta-stat">
-              <span class="m-meta-label">COMMUNICATION</span>
-              <span class="m-meta-val font-mono" id="mComm">--%</span>
-            </div>
-            <div class="m-meta-stat">
-              <span class="m-meta-label">STATUS</span>
-              <span class="m-meta-val" id="mStatus">Active</span>
             </div>
           </div>
 
