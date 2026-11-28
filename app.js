@@ -587,12 +587,14 @@ function renderTable() {
   // Dynamically update column headers
   const thRank = document.querySelector('th.col-rank');
   if (thRank) {
-    thRank.textContent = rankingMode === 'assessment' ? 'OVERALL RANK' : 'CODING RANK';
+    thRank.textContent = rankingMode === 'assessment' ? 'RANK' : 'RANK';
     thRank.dataset.sort = rankingMode === 'assessment' ? 'total_assessment' : 'codingRank';
+    thRank.title = rankingMode === 'assessment' ? 'Overall Assessment Rank' : 'Official Coding Rank';
   }
   const thTotal = document.querySelector('th[data-sort="total_assessment"]');
   if (thTotal) {
-    thTotal.textContent = 'TOTAL MARKS (/2000)';
+    thTotal.textContent = 'TOTAL';
+    thTotal.title = 'Total Marks (/2000)';
   }
 
   const total = filteredStudents.length;
@@ -632,11 +634,17 @@ function renderTable() {
     const pct = ((totalA / maxPossible) * 100).toFixed(1);
     const barWidth = Math.min(Math.max((totalA / maxPossible) * 100, 0), 100);
 
-    // Individual assessments
-    const a1Str = (s.assessment1 && s.assessment1 !== '-') ? escapeHtml(s.assessment1) : '-';
-    const a2Str = (s.assessment2 && s.assessment2 !== '-') ? escapeHtml(s.assessment2) : '-';
-    const a3Str = (s.assessment3 && s.assessment3 !== '-') ? escapeHtml(s.assessment3) : '-';
-    const a4Str = (s.assessment4 && !hasValidUrl(s.assessment4) && s.assessment4 !== '-') ? escapeHtml(s.assessment4) : '-';
+    // Individual assessments (compact formatting for desktop table & mobile)
+    const fmtScore = (val) => {
+      if (!val || val === '-' || hasValidUrl(val)) return '-';
+      const sVal = String(val).trim();
+      if (sVal.toUpperCase().startsWith('ABSENT')) return 'ABSENT';
+      return escapeHtml(sVal.replace(/\s*\/\s*/g, '/'));
+    };
+    const a1Str = fmtScore(s.assessment1);
+    const a2Str = fmtScore(s.assessment2);
+    const a3Str = fmtScore(s.assessment3);
+    const a4Str = fmtScore(s.assessment4);
 
     // Branch and Group Ranks
     const branchRankStr = s.branchRank ? `#${s.branchRank}` : 'No Rank';
@@ -712,7 +720,7 @@ function renderTable() {
         <span class="badge-branch">${escapeHtml(s.branch || '-')}</span>
       </td>
       <td class="col-group">
-        <span class="badge-group">${escapeHtml(s.resolvedGroup || s.cycle1 || s.cycle2 || '-')}</span>
+        <span class="badge-group" title="${escapeHtml(s.resolvedGroup || s.cycle1 || s.cycle2 || '-')}">${escapeHtml(groupShort)}</span>
       </td>
       <td class="col-cp">
         <div class="cp-cell">
