@@ -1096,10 +1096,11 @@ body {
   color: var(--ink-secondary);
 }
 
-.rank-sub-badge.top-1 {
-  background: rgba(217, 93, 71, 0.12);
-  border-color: rgba(217, 93, 71, 0.35);
-  color: var(--accent-vermilion);
+.rank-sub-badge.top-1,
+.rank-sub-badge.is-active-scope {
+  background: rgba(239, 68, 68, 0.14);
+  border-color: rgba(239, 68, 68, 0.45);
+  color: #EF4444;
 }
 
 .col-profiles {
@@ -2351,6 +2352,12 @@ body {
 
   .mob-stat-item.highlight-tot strong {
     color: var(--accent-vermilion);
+    font-weight: 700;
+  }
+
+  .mob-stat-item.highlight-rank,
+  .mob-stat-item.highlight-rank strong {
+    color: #EF4444;
     font-weight: 700;
   }
 

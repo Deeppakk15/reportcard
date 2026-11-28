@@ -641,8 +641,14 @@ function renderTable() {
     // Branch and Group Ranks
     const branchRankStr = s.branchRank ? `#${s.branchRank}` : 'No Rank';
     const groupRankStr = s.groupRank ? `#${s.groupRank}` : 'No Rank';
+    const isBranchScopeActive = (currentBranch !== 'ALL' || currentSortKey === 'branchRank') && s.branchRank;
+    const isGroupScopeActive = (currentGroup !== 'ALL' || currentSortKey === 'groupRank') && s.groupRank;
     const isTopBranch = s.branchRank === 1 ? ' top-1' : (!s.branchRank ? ' rank-none' : '');
     const isTopGroup = s.groupRank === 1 ? ' top-1' : (!s.groupRank ? ' rank-none' : '');
+    const branchActiveClass = isBranchScopeActive ? ' is-active-scope' : '';
+    const groupActiveClass = isGroupScopeActive ? ' is-active-scope' : '';
+    const mobBranchHighlight = isBranchScopeActive ? ' highlight-rank' : '';
+    const mobGroupHighlight = isGroupScopeActive ? ' highlight-rank' : '';
     const branchRankTitle = s.branchRank
       ? `Rank #${s.branchRank} of ${s.branchTotal || '-'} in ${escapeHtml(s.branch || '')}`
       : 'No coding rank';
@@ -687,9 +693,9 @@ function renderTable() {
             <span class="mob-stat-sep">•</span>
             <span class="mob-stat-item highlight-tot">Tot: <strong>${totalA}</strong><span class="mob-tot-max">/${maxPossible}</span></span>
             <span class="mob-stat-sep">•</span>
-            <span class="mob-stat-item">BRank: <strong>${branchRankStr}</strong></span>
+            <span class="mob-stat-item${mobBranchHighlight}">BRank: <strong>${branchRankStr}</strong></span>
             <span class="mob-stat-sep">•</span>
-            <span class="mob-stat-item">GRank: <strong>${groupRankStr}</strong></span>
+            <span class="mob-stat-item${mobGroupHighlight}">GRank: <strong>${groupRankStr}</strong></span>
           </div>
           <div class="mob-scores-row font-mono">
             <span class="mob-score-val">A1: ${a1Str}</span>
@@ -740,10 +746,10 @@ function renderTable() {
         ${a4Str}
       </td>
       <td class="col-branch-rank font-mono">
-        <span class="rank-sub-badge${isTopBranch}" title="${branchRankTitle}">${branchRankStr}</span>
+        <span class="rank-sub-badge${isTopBranch}${branchActiveClass}" title="${branchRankTitle}">${branchRankStr}</span>
       </td>
       <td class="col-group-rank font-mono">
-        <span class="rank-sub-badge${isTopGroup}" title="${groupRankTitle}">${groupRankStr}</span>
+        <span class="rank-sub-badge${isTopGroup}${groupActiveClass}" title="${groupRankTitle}">${groupRankStr}</span>
       </td>
     `;
 
