@@ -2262,7 +2262,7 @@ body {
   }
 
   .ranking-table td.col-rank {
-    min-width: 56px !important;
+    min-width: 0 !important;
     width: auto !important;
     display: flex !important;
     align-items: flex-start !important;
@@ -2270,11 +2270,16 @@ body {
     flex-shrink: 0 !important;
   }
 
+  .ranking-table td.col-rank .rank-pill {
+    min-width: 0;
+    padding: 2px 6px;
+  }
+
   .ranking-table td.col-student {
     flex: 1 !important;
     min-width: 0 !important;
     display: block !important;
-    padding: 0 0 0 8px !important;
+    padding: 0 0 0 6px !important;
   }
 
   /* Full-width details row starts directly below rank and extends edge-to-edge */
