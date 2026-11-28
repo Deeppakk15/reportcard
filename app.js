@@ -30,6 +30,11 @@ const pageInfo = document.getElementById('pageInfo');
 const prevPageBtn = document.getElementById('prevPageBtn');
 const nextPageBtn = document.getElementById('nextPageBtn');
 
+// Ranking Mode Toggle (CP Score <-> Assessment Score)
+const rankModeToggleBtn = document.getElementById('rankModeToggleBtn');
+const modeLabelCp = document.getElementById('modeLabelCp');
+const modeLabelAssessment = document.getElementById('modeLabelAssessment');
+
 // Vertical Search Dropdown Container
 const searchDropdown = document.getElementById('searchDropdown');
 const searchDropdownList = document.getElementById('searchDropdownList');
@@ -971,6 +976,16 @@ function setRankingMode(mode, syncSort = true) {
   rankingMode = mode === 'assessment' ? 'assessment' : 'cp';
   const isAssessmentMode = rankingMode === 'assessment';
 
+  if (rankModeToggleBtn) {
+    rankModeToggleBtn.classList.toggle('active', isAssessmentMode);
+  }
+  if (modeLabelCp) {
+    modeLabelCp.classList.toggle('is-active', !isAssessmentMode);
+  }
+  if (modeLabelAssessment) {
+    modeLabelAssessment.classList.toggle('is-active', isAssessmentMode);
+  }
+
   if (syncSort) {
     currentSortKey = isAssessmentMode ? 'total_assessment' : 'cp_score_num';
     sortDirection = 'desc';
@@ -985,6 +1000,19 @@ function setRankingMode(mode, syncSort = true) {
   if (currentModalStudent) {
     openStudentModal(currentModalStudent);
   }
+}
+
+// Ranking Mode Toggle Button (CP Score <-> Assessment Score)
+if (rankModeToggleBtn) {
+  rankModeToggleBtn.onclick = () => {
+    setRankingMode(rankingMode === 'cp' ? 'assessment' : 'cp', true);
+  };
+  rankModeToggleBtn.onkeydown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      rankModeToggleBtn.click();
+    }
+  };
 }
 
 // Search
