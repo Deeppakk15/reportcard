@@ -7,7 +7,7 @@ let allStudents = [];
 let filteredStudents = [];
 let currentBranch = 'ALL';
 let currentGroup = 'ALL';
-let currentSortKey = 'codingRank';
+let currentSortKey = 'cp_score_num';
 let sortDirection = 'desc'; // 'desc' or 'asc' (for ranks: 'desc' = top/smallest rank number first)
 let currentPage = 1;
 const PAGE_SIZE = 50;
@@ -284,6 +284,13 @@ function applyFiltersAndSort() {
       if (rankA !== null && rankB === null) return -1;
       if (rankA !== null && rankB !== null && rankA !== rankB) {
         return sortDirection === 'desc' ? rankA - rankB : rankB - rankA;
+      }
+      return codingRankComparator(a, b);
+    } else if (currentSortKey === 'cp_score_num') {
+      const cpA = Number(a.cp_score_num || 0);
+      const cpB = Number(b.cp_score_num || 0);
+      if (cpA !== cpB) {
+        return sortDirection === 'desc' ? cpB - cpA : cpA - cpB;
       }
       return codingRankComparator(a, b);
     } else if (currentSortKey === 'total_assessment') {
@@ -945,7 +952,9 @@ document.querySelectorAll('.ranking-table th.sortable').forEach(th => {
     } else {
       currentSortKey = key;
       sortDirection = 'desc';
-      sortBySelect.value = key;
+      if ([...sortBySelect.options].some(o => o.value === key)) {
+        sortBySelect.value = key;
+      }
     }
     applyFiltersAndSort();
   };
