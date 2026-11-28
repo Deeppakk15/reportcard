@@ -517,6 +517,28 @@ body {
   border-color: var(--border-focus);
 }
 
+.rank-by-group .control-label {
+  color: #EF4444;
+}
+
+.select-rank-by {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.45);
+  color: #FCA5A5;
+  font-weight: 600;
+}
+
+.select-rank-by:hover,
+.select-rank-by:focus {
+  border-color: #EF4444;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.25);
+}
+
+.select-rank-by option {
+  background: var(--bg-surface);
+  color: var(--ink-primary);
+}
+
 /* ==========================================================================
    VERTICAL SEARCH DROPDOWN (Matches user screenshot)
    ========================================================================== */
