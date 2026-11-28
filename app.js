@@ -7,13 +7,13 @@ let allStudents = [];
 let filteredStudents = [];
 let currentBranch = 'ALL';
 let currentGroup = 'ALL';
-let currentSortKey = 'cp_score_num';
+let currentSortKey = 'total_assessment';
 let sortDirection = 'desc'; // 'desc' or 'asc' (for ranks: 'desc' = top/smallest rank number first)
 let currentPage = 1;
 const PAGE_SIZE = 50;
 
-// Ranking Mode Toggle State ('cp' = CP Score / Coding Rank, 'assessment' = Total Assessment Marks)
-let rankingMode = 'cp';
+// Ranking Mode State ('assessment' = Total Assessment Marks, 'cp' = CP Score / Coding Rank)
+let rankingMode = 'assessment';
 let currentModalStudent = null;
 
 // DOM Elements
