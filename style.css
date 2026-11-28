@@ -1715,15 +1715,15 @@ body {
   text-align: center;
 }
 
-/* EXCLUDE A1 Toggle Pill (Red & Black Theme for Phone and Laptop) */
+/* Ranking Mode Toggle Pill (CP Score <-> Assessment Score) */
 .toggle-pill-wrapper {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   background: #0A0A0A;
   border: 1.5px solid #262626;
   border-radius: 9999px;
-  padding: 5px 12px 5px 7px;
+  padding: 5px 12px;
   cursor: pointer;
   user-select: none;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1733,6 +1733,21 @@ body {
 .toggle-pill-wrapper:hover {
   border-color: #7F1D1D;
   box-shadow: 0 0 14px rgba(239, 68, 68, 0.3);
+}
+
+.toggle-mode-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #78716C;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+  white-space: nowrap;
+}
+
+.toggle-mode-label.is-active {
+  color: #EF4444;
+  text-shadow: 0 0 10px rgba(239, 68, 68, 0.45);
 }
 
 .toggle-switch-track {
@@ -1749,37 +1764,16 @@ body {
 .toggle-switch-knob {
   width: 16px;
   height: 16px;
-  background: #78716C;
+  background: #EF4444;
   border-radius: 50%;
   position: absolute;
   top: 2px;
   left: 2px;
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
 }
 
-.toggle-label-text {
-  font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  color: #EF4444;
-  text-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
-}
-
-.toggle-state-badge {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  padding: 2px 7px;
-  border-radius: 9999px;
-  background: #141212;
-  border: 1px solid #292524;
-  color: #A8A29E;
-  letter-spacing: 0.05em;
-  transition: all 0.2s ease;
-}
-
-/* When Toggle is ACTIVE / ON — Pure Red & Black */
+/* When Toggle is ACTIVE (Assessment Mode) */
 .toggle-pill-wrapper.active {
   border-color: #DC2626;
   box-shadow: 0 0 18px rgba(220, 38, 38, 0.45);
@@ -1795,13 +1789,6 @@ body {
   transform: translateX(16px);
   background: #FFFFFF;
   box-shadow: 0 0 8px rgba(255, 255, 255, 0.9), 0 0 14px rgba(239, 68, 68, 0.8);
-}
-
-.toggle-pill-wrapper.active .toggle-state-badge {
-  background: rgba(220, 38, 38, 0.25);
-  color: #FCA5A5;
-  border: 1px solid rgba(239, 68, 68, 0.6);
-  box-shadow: 0 0 10px rgba(239, 68, 68, 0.35);
 }
 
 /* Desktop Defaults for Table Rows and Mobile Sub-Rows */
@@ -2648,12 +2635,12 @@ body {
   }
 
   .toggle-pill-wrapper {
-    padding: 3px 8px 3px 5px;
+    padding: 4px 9px;
     gap: 6px;
   }
 
-  .toggle-label-text {
-    font-size: 10px;
+  .toggle-mode-label {
+    font-size: 9.5px;
   }
 
   .live-indicator {

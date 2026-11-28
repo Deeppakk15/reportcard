@@ -12,8 +12,8 @@ let sortDirection = 'desc'; // 'desc' or 'asc' (for ranks: 'desc' = top/smallest
 let currentPage = 1;
 const PAGE_SIZE = 50;
 
-// Exclude A1 Toggle State
-let isExcludeA1 = false;
+// Ranking Mode Toggle State ('cp' = CP Score / Coding Rank, 'assessment' = Total Assessment Marks)
+let rankingMode = 'cp';
 let currentModalStudent = null;
 
 // DOM Elements
@@ -30,9 +30,10 @@ const pageInfo = document.getElementById('pageInfo');
 const prevPageBtn = document.getElementById('prevPageBtn');
 const nextPageBtn = document.getElementById('nextPageBtn');
 
-// EXCLUDE A1 Button
-const excludeA1Btn = document.getElementById('excludeA1Btn');
-const excludeA1State = document.getElementById('excludeA1State');
+// Ranking Mode Toggle (CP Score <-> Assessment Score)
+const rankModeToggleBtn = document.getElementById('rankModeToggleBtn');
+const modeLabelCp = document.getElementById('modeLabelCp');
+const modeLabelAssessment = document.getElementById('modeLabelAssessment');
 
 // Vertical Search Dropdown Container
 const searchDropdown = document.getElementById('searchDropdown');
@@ -86,8 +87,30 @@ function codingRankComparator(a, b) {
   return String(a.rollNo || '').localeCompare(String(b.rollNo || ''));
 }
 
-// Compute persistent batch, branch, and group ranks strictly from given Coding Rank
+// Comparator based on Total Assessment Marks
+function assessmentComparator(a, b) {
+  const scoreDiff = Number(b.effectiveAssessment || 0) - Number(a.effectiveAssessment || 0);
+  if (scoreDiff !== 0) return scoreDiff;
+
+  const a4Diff = Number(b.assessment4_num || 0) - Number(a.assessment4_num || 0);
+  if (a4Diff !== 0) return a4Diff;
+
+  const a3Diff = Number(b.assessment3_num || 0) - Number(a.assessment3_num || 0);
+  if (a3Diff !== 0) return a3Diff;
+
+  const a2Diff = Number(b.assessment2_num || 0) - Number(a.assessment2_num || 0);
+  if (a2Diff !== 0) return a2Diff;
+
+  const a1Diff = Number(b.assessment1_num || 0) - Number(a.assessment1_num || 0);
+  if (a1Diff !== 0) return a1Diff;
+
+  return String(a.rollNo || '').localeCompare(String(b.rollNo || ''));
+}
+
+// Compute persistent batch, branch, and group ranks based on active rankingMode ('cp' or 'assessment')
 function calculateAllRanks() {
+  const isAssessmentMode = rankingMode === 'assessment';
+
   // Precalculate coding rank + effective assessment marks
   allStudents.forEach(s => {
     s.codingRank = parseCodingRank(s.coding_rank_num ?? s.collegeCodingRank);
@@ -95,18 +118,23 @@ function calculateAllRanks() {
     const a2 = Number(s.assessment2_num || 0);
     const a3 = Number(s.assessment3_num || 0);
     const a4 = Number(s.assessment4_num || 0);
-    if (isExcludeA1) {
-      s.effectiveAssessment = a2 + a3 + a4;
-      s.maxAssessment = 1500;
-    } else {
-      s.effectiveAssessment = s.total_assessment || (a1 + a2 + a3 + a4);
-      s.maxAssessment = 2000;
-    }
-    // 1. Overall Batch Rank matches the original given Coding Rank (or null => No Rank)
-    s.overallRank = s.codingRank;
+    s.effectiveAssessment = s.total_assessment || (a1 + a2 + a3 + a4);
+    s.maxAssessment = 2000;
   });
 
-  // 2. Branch Rank (within each engineering department, ranked by codingRank)
+  // 1. Overall Batch Rank
+  if (isAssessmentMode) {
+    const overallSorted = [...allStudents].sort(assessmentComparator);
+    overallSorted.forEach((s, idx) => {
+      s.overallRank = idx + 1;
+    });
+  } else {
+    allStudents.forEach(s => {
+      s.overallRank = s.codingRank;
+    });
+  }
+
+  // 2. Branch Rank
   const branchMap = {};
   allStudents.forEach(s => {
     const b = s.branch || 'Unknown';
@@ -114,21 +142,28 @@ function calculateAllRanks() {
     branchMap[b].push(s);
   });
   Object.values(branchMap).forEach(list => {
-    list.sort(codingRankComparator);
-    let rankPos = 0;
-    const rankedTotal = list.filter(item => item.codingRank !== null).length;
-    list.forEach(s => {
-      if (s.codingRank !== null) {
-        rankPos += 1;
-        s.branchRank = rankPos;
-      } else {
-        s.branchRank = null;
-      }
-      s.branchTotal = rankedTotal;
-    });
+    list.sort(isAssessmentMode ? assessmentComparator : codingRankComparator);
+    if (isAssessmentMode) {
+      list.forEach((s, idx) => {
+        s.branchRank = idx + 1;
+        s.branchTotal = list.length;
+      });
+    } else {
+      let rankPos = 0;
+      const rankedTotal = list.filter(item => item.codingRank !== null).length;
+      list.forEach(s => {
+        if (s.codingRank !== null) {
+          rankPos += 1;
+          s.branchRank = rankPos;
+        } else {
+          s.branchRank = null;
+        }
+        s.branchTotal = rankedTotal;
+      });
+    }
   });
 
-  // 3. Group Rank (within each training group, ranked by codingRank)
+  // 3. Group Rank
   const groupMap = {};
   allStudents.forEach(s => {
     const g = (s.cycle1 && s.cycle1 !== '-') ? s.cycle1 : ((s.cycle2 && s.cycle2 !== '-') ? s.cycle2 : 'Unassigned');
@@ -137,18 +172,25 @@ function calculateAllRanks() {
     groupMap[g].push(s);
   });
   Object.values(groupMap).forEach(list => {
-    list.sort(codingRankComparator);
-    let rankPos = 0;
-    const rankedTotal = list.filter(item => item.codingRank !== null).length;
-    list.forEach(s => {
-      if (s.codingRank !== null) {
-        rankPos += 1;
-        s.groupRank = rankPos;
-      } else {
-        s.groupRank = null;
-      }
-      s.groupTotal = rankedTotal;
-    });
+    list.sort(isAssessmentMode ? assessmentComparator : codingRankComparator);
+    if (isAssessmentMode) {
+      list.forEach((s, idx) => {
+        s.groupRank = idx + 1;
+        s.groupTotal = list.length;
+      });
+    } else {
+      let rankPos = 0;
+      const rankedTotal = list.filter(item => item.codingRank !== null).length;
+      list.forEach(s => {
+        if (s.codingRank !== null) {
+          rankPos += 1;
+          s.groupRank = rankPos;
+        } else {
+          s.groupRank = null;
+        }
+        s.groupTotal = rankedTotal;
+      });
+    }
   });
 }
 
@@ -206,8 +248,8 @@ function updateBatchMetrics(dataset) {
     statTotalStudents.textContent = dataset.length.toLocaleString();
   }
 
-  const maxPossible = isExcludeA1 ? 1500 : 2000;
-  const threshold75 = isExcludeA1 ? 1125 : 1500;
+  const maxPossible = 2000;
+  const threshold75 = 1500;
 
   let highestScore = -1;
   let topStudent = null;
@@ -328,17 +370,16 @@ function applyFiltersAndSort() {
     if ((b.assessment2_num || 0) !== (a.assessment2_num || 0)) {
       return (b.assessment2_num || 0) - (a.assessment2_num || 0);
     }
-    if (!isExcludeA1 && (b.assessment1_num || 0) !== (a.assessment1_num || 0)) {
+    if ((b.assessment1_num || 0) !== (a.assessment1_num || 0)) {
       return (b.assessment1_num || 0) - (a.assessment1_num || 0);
     }
     return String(a.rollNo || '').localeCompare(String(b.rollNo || ''));
   });
 
-  // 3. Exact Top 3 students by Coding Rank in this active scope
-  const top3 = [...scopedStudents]
-    .sort(codingRankComparator)
-    .filter(s => s.codingRank !== null)
-    .slice(0, 3);
+  // 3. Exact Top 3 students in this active scope by active ranking mode
+  const top3 = rankingMode === 'assessment'
+    ? [...scopedStudents].sort(assessmentComparator).slice(0, 3)
+    : [...scopedStudents].sort(codingRankComparator).filter(s => s.codingRank !== null).slice(0, 3);
 
   // 4. Now filter for the table based on search query (in real-time)
   if (query) {
@@ -360,15 +401,13 @@ function applyFiltersAndSort() {
 }
 
 function updateScopeTag(query) {
-  let scope = 'Coding Rank Leaderboard';
+  const modePrefix = rankingMode === 'assessment' ? 'Assessment Score' : 'CP Score';
+  let scope = `${modePrefix} Leaderboard`;
   if (currentBranch !== 'ALL') {
-    scope = `${currentBranch} Coding Ranking`;
+    scope = `${currentBranch} ${modePrefix} Ranking`;
   }
   if (currentGroup !== 'ALL') {
     scope += ` • Group ${currentGroup}`;
-  }
-  if (isExcludeA1) {
-    scope += ' • [A1 Excluded]';
   }
   if (query) {
     currentScopeTag.textContent = `${scope} • Query: "${query}"`;
@@ -415,7 +454,6 @@ function renderSearchDropdown(query) {
 
   // Render top 15 matching rows vertically
   const rowsToRender = matches.slice(0, 15);
-  const maxPossible = isExcludeA1 ? 1500 : 2000;
 
   rowsToRender.forEach(s => {
     const row = document.createElement('div');
@@ -429,8 +467,11 @@ function renderSearchDropdown(query) {
     const groupText = s.cycle1 ? `28ACSE Section ${s.cycle1}` : (s.cycle2 ? `28ACSE Section ${s.cycle2}` : '');
     const cpNum = Number(s.cp_score_num || 0);
     const cpDisplay = s.cpScore && s.cpScore !== '-' ? `${String(s.cpScore).replace('%', '')}%` : '0%';
+    const scoreVal = s.effectiveAssessment || 0;
     const rankText = s.overallRank ? `#${s.overallRank}` : 'No Rank';
     const rankNoClass = s.overallRank ? '' : ' is-no-rank';
+    const rightVal = rankingMode === 'assessment' ? scoreVal : (cpNum > 0 ? cpDisplay : '-');
+    const rightUnit = rankingMode === 'assessment' ? 'pts' : 'CP';
 
     row.innerHTML = `
       <div class="search-row-left">
@@ -445,8 +486,8 @@ function renderSearchDropdown(query) {
         </div>
       </div>
       <div class="search-row-right">
-        <span class="search-row-pts">${cpNum > 0 ? cpDisplay : '-'}</span>
-        <span class="search-row-unit">CP</span>
+        <span class="search-row-pts">${rightVal}</span>
+        <span class="search-row-unit">${rightUnit}</span>
       </div>
     `;
 
@@ -466,28 +507,55 @@ function renderPodium(top3) {
   }
   document.getElementById('podiumSection').style.display = 'block';
 
-  const maxPossible = isExcludeA1 ? 1500 : 2000;
+  const maxPossible = 2000;
   const ranks = ['1', '2', '3'];
   const rankLabels = ['1st Place', '2nd Place', '3rd Place'];
 
   // Top 3 positions remain permanently still, never altered or shifted by search
   const isFilteredScope = currentBranch !== 'ALL' || currentGroup !== 'ALL';
+  const isAssessmentMode = rankingMode === 'assessment';
   top3.forEach((s, idx) => {
     const card = document.createElement('div');
     card.className = `podium-card rank-${ranks[idx]}`;
     card.onclick = () => openStudentModal(s);
 
     const totalA = s.effectiveAssessment || 0;
+    const pct = ((totalA / maxPossible) * 100).toFixed(1);
     const a1 = s.assessment1_num || 0;
     const a2 = s.assessment2_num || 0;
     const a3 = s.assessment3_num || 0;
     const a4 = s.assessment4_num || 0;
     const cpDisplay = s.cpScore && s.cpScore !== '-' ? `${String(s.cpScore).replace('%', '')}%` : '0%';
 
-    const a1Display = isExcludeA1 ? `<span class="score-excluded">${a1}</span>` : `${a1}`;
-    const rankBadgeText = isFilteredScope && s.overallRank
-      ? `#${ranks[idx]} ${rankLabels[idx]} • Coding #${s.overallRank}`
-      : `#${s.overallRank || ranks[idx]} ${rankLabels[idx]}`;
+    const rankBadgeText = isAssessmentMode
+      ? `#${ranks[idx]} ${rankLabels[idx]}`
+      : (isFilteredScope && s.overallRank
+        ? `#${ranks[idx]} ${rankLabels[idx]} • Coding #${s.overallRank}`
+        : `#${s.overallRank || ranks[idx]} ${rankLabels[idx]}`);
+
+    const leftStatHtml = isAssessmentMode
+      ? `<div>
+          <div class="podium-stat-val">${totalA} <span style="font-size: 13px; font-weight: 500; color: var(--ink-secondary);">/ ${maxPossible}</span></div>
+          <div class="podium-stat-lbl">Total Marks (${pct}%)</div>
+        </div>`
+      : `<div>
+          <div class="podium-stat-val">${cpDisplay} <span style="font-size: 13px; font-weight: 500; color: var(--ink-secondary);">CP</span></div>
+          <div class="podium-stat-lbl">Coding Rank #${s.overallRank}</div>
+        </div>`;
+
+    const rightStatHtml = isAssessmentMode
+      ? `<div style="text-align: right;">
+          <div class="podium-stat-val" style="font-size: 13px; color: var(--ink-primary); font-weight: 500;">
+            ${a1} | ${a2} | ${a3} | ${a4}
+          </div>
+          <div class="podium-stat-lbl">A1 | A2 | A3 | A4</div>
+        </div>`
+      : `<div style="text-align: right;">
+          <div class="podium-stat-val" style="font-size: 13px; color: var(--ink-primary); font-weight: 500;">
+            ${totalA} / ${maxPossible}
+          </div>
+          <div class="podium-stat-lbl">A1: ${a1} | A2: ${a2} | A3: ${a3} | A4: ${a4}</div>
+        </div>`;
 
     card.innerHTML = `
       <div class="podium-top">
@@ -499,16 +567,8 @@ function renderPodium(top3) {
         <div class="podium-roll font-mono">${escapeHtml(s.rollNo || '-')}</div>
       </div>
       <div class="podium-metrics">
-        <div>
-          <div class="podium-stat-val">${cpDisplay} <span style="font-size: 13px; font-weight: 500; color: var(--ink-secondary);">CP</span></div>
-          <div class="podium-stat-lbl">Coding Rank #${s.overallRank}</div>
-        </div>
-        <div style="text-align: right;">
-          <div class="podium-stat-val" style="font-size: 13px; color: var(--ink-primary); font-weight: 500;">
-            ${totalA} / ${maxPossible}
-          </div>
-          <div class="podium-stat-lbl">A1: ${a1Display} | A2: ${a2} | A3: ${a3} | A4: ${a4}</div>
-        </div>
+        ${leftStatHtml}
+        ${rightStatHtml}
       </div>
     `;
 
@@ -522,17 +582,17 @@ function renderPodium(top3) {
 function renderTable() {
   rankingBody.innerHTML = '';
 
-  const maxPossible = isExcludeA1 ? 1500 : 2000;
+  const maxPossible = 2000;
 
   // Dynamically update column headers
-  const thA1 = document.querySelector('th[data-sort="assessment1_num"]');
-  if (thA1) {
-    thA1.textContent = isExcludeA1 ? 'A1 (EXCLUDED)' : 'ASSESSMENT 1';
-    thA1.style.opacity = isExcludeA1 ? '0.45' : '1';
+  const thRank = document.querySelector('th.col-rank');
+  if (thRank) {
+    thRank.textContent = rankingMode === 'assessment' ? 'OVERALL RANK' : 'CODING RANK';
+    thRank.dataset.sort = rankingMode === 'assessment' ? 'total_assessment' : 'codingRank';
   }
   const thTotal = document.querySelector('th[data-sort="total_assessment"]');
   if (thTotal) {
-    thTotal.textContent = isExcludeA1 ? 'TOTAL MARKS (/1500)' : 'TOTAL MARKS (/2000)';
+    thTotal.textContent = 'TOTAL MARKS (/2000)';
   }
 
   const total = filteredStudents.length;
@@ -577,10 +637,6 @@ function renderTable() {
     const a2Str = (s.assessment2 && s.assessment2 !== '-') ? escapeHtml(s.assessment2) : '-';
     const a3Str = (s.assessment3 && s.assessment3 !== '-') ? escapeHtml(s.assessment3) : '-';
     const a4Str = (s.assessment4 && !hasValidUrl(s.assessment4) && s.assessment4 !== '-') ? escapeHtml(s.assessment4) : '-';
-
-    const a1CellHtml = isExcludeA1 
-      ? `<span class="score-excluded" title="Assessment 1 Excluded">${a1Str}</span>` 
-      : a1Str;
 
     // Branch and Group Ranks
     const branchRankStr = s.branchRank ? `#${s.branchRank}` : 'No Rank';
@@ -636,7 +692,7 @@ function renderTable() {
             <span class="mob-stat-item">GRank: <strong>${groupRankStr}</strong></span>
           </div>
           <div class="mob-scores-row font-mono">
-            <span class="mob-score-val">A1: ${isExcludeA1 ? '<span class="score-excluded">' + a1Str + '</span>' : a1Str}</span>
+            <span class="mob-score-val">A1: ${a1Str}</span>
             <span class="mob-score-sep">|</span>
             <span class="mob-score-val">A2: ${a2Str}</span>
             <span class="mob-score-sep">|</span>
@@ -672,7 +728,7 @@ function renderTable() {
         </div>
       </td>
       <td class="col-a1 font-mono">
-        ${a1CellHtml}
+        ${a1Str}
       </td>
       <td class="col-a2 font-mono">
         ${a2Str}
@@ -731,14 +787,14 @@ function openStudentModal(s) {
   if (mGroupPill) mGroupPill.textContent = s.resolvedGroup || s.cycle1 || s.cycle2 || 'Training Section';
 
   // Hero total score card
-  const maxPossible = isExcludeA1 ? 1500 : 2000;
+  const maxPossible = 2000;
   const totalScore = s.effectiveAssessment || 0;
   const pct = ((totalScore / maxPossible) * 100).toFixed(1);
   const barWidth = Math.min(Math.max((totalScore / maxPossible) * 100, 0), 100);
 
   const mHeroLabel = document.getElementById('mHeroTotalLabel');
   if (mHeroLabel) {
-    mHeroLabel.textContent = isExcludeA1 ? 'TOTAL SCORE (EXCLUDING A1)' : 'TOTAL ASSESSMENT SCORE';
+    mHeroLabel.textContent = 'TOTAL ASSESSMENT SCORE';
   }
 
   const mTotalVal = document.getElementById('mTotalScoreVal');
@@ -754,14 +810,11 @@ function openStudentModal(s) {
   if (mTotalBar) mTotalBar.style.width = `${barWidth}%`;
 
   // Assessment cards (A1, A2, A3, A4)
-  const a1Card = document.getElementById('mA1Card');
-  if (a1Card) a1Card.classList.toggle('is-excluded', isExcludeA1);
-
   const a1Val = document.getElementById('mA1Val');
   if (a1Val) a1Val.textContent = (s.assessment1 && s.assessment1 !== '-') ? s.assessment1 : '-';
 
   const a1Sub = document.getElementById('mA1Sub');
-  if (a1Sub) a1Sub.textContent = isExcludeA1 ? 'EXCLUDED' : 'Max: 500';
+  if (a1Sub) a1Sub.textContent = 'Max: 500';
 
   const a2Val = document.getElementById('mA2Val');
   if (a2Val) a2Val.textContent = (s.assessment2 && s.assessment2 !== '-') ? s.assessment2 : '-';
@@ -772,7 +825,7 @@ function openStudentModal(s) {
   const a4Val = document.getElementById('mA4Val');
   if (a4Val) a4Val.textContent = (s.assessment4 && !hasValidUrl(s.assessment4) && s.assessment4 !== '-') ? s.assessment4 : '-';
 
-  // Cohort rank cards (recalculated from original Coding Rank; both overall & coding rank match)
+  // Cohort rank cards (recalculated based on active mode: CP Score vs Assessment Score)
   const mOverallRank = document.getElementById('mOverallRankVal');
   if (mOverallRank) {
     mOverallRank.textContent = s.overallRank ? `#${s.overallRank}` : 'No Rank';
@@ -781,7 +834,9 @@ function openStudentModal(s) {
 
   const mOverallSub = document.getElementById('mOverallRankSub');
   if (mOverallSub) {
-    mOverallSub.textContent = s.overallRank ? 'College Coding Rank' : 'Unranked';
+    mOverallSub.textContent = rankingMode === 'assessment'
+      ? 'Assessment Marks Rank'
+      : (s.overallRank ? 'College Coding Rank' : 'Unranked');
   }
 
   const mBranchRank = document.getElementById('mBranchRankVal');
@@ -882,25 +937,45 @@ function closeUpdatePopup() {
 // ==========================================
 // Event Listeners
 // ==========================================
-// EXCLUDE A1 Toggle Button
-if (excludeA1Btn) {
-  excludeA1Btn.onclick = () => {
-    isExcludeA1 = !isExcludeA1;
-    excludeA1Btn.classList.toggle('active', isExcludeA1);
-    if (excludeA1State) {
-      excludeA1State.textContent = isExcludeA1 ? 'ON' : 'OFF';
+function setRankingMode(mode, syncSort = true) {
+  rankingMode = mode === 'assessment' ? 'assessment' : 'cp';
+  const isAssessmentMode = rankingMode === 'assessment';
+
+  if (rankModeToggleBtn) {
+    rankModeToggleBtn.classList.toggle('active', isAssessmentMode);
+  }
+  if (modeLabelCp) {
+    modeLabelCp.classList.toggle('is-active', !isAssessmentMode);
+  }
+  if (modeLabelAssessment) {
+    modeLabelAssessment.classList.toggle('is-active', isAssessmentMode);
+  }
+
+  if (syncSort) {
+    currentSortKey = isAssessmentMode ? 'total_assessment' : 'cp_score_num';
+    sortDirection = 'desc';
+    if (sortBySelect) {
+      sortBySelect.value = currentSortKey;
     }
-    calculateAllRanks();
-    updateBatchMetrics(allStudents);
-    applyFiltersAndSort();
-    if (currentModalStudent) {
-      openStudentModal(currentModalStudent);
-    }
+  }
+
+  calculateAllRanks();
+  updateBatchMetrics(allStudents);
+  applyFiltersAndSort();
+  if (currentModalStudent) {
+    openStudentModal(currentModalStudent);
+  }
+}
+
+// Ranking Mode Toggle Button (CP Score <-> Assessment Score)
+if (rankModeToggleBtn) {
+  rankModeToggleBtn.onclick = () => {
+    setRankingMode(rankingMode === 'cp' ? 'assessment' : 'cp', true);
   };
-  excludeA1Btn.onkeydown = (e) => {
+  rankModeToggleBtn.onkeydown = (e) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      excludeA1Btn.click();
+      rankModeToggleBtn.click();
     }
   };
 }
@@ -936,17 +1011,24 @@ groupFilter.onchange = () => {
   applyFiltersAndSort();
 };
 
-// Sort selection
+// Sort selection (CP Score <-> Total Assessment Marks)
 sortBySelect.onchange = () => {
-  currentSortKey = sortBySelect.value;
-  sortDirection = currentSortKey === 'rollNo' ? 'asc' : 'desc';
-  applyFiltersAndSort();
+  const nextMode = sortBySelect.value === 'total_assessment' ? 'assessment' : 'cp';
+  setRankingMode(nextMode, true);
 };
 
 // Table column header click to sort
 document.querySelectorAll('.ranking-table th.sortable').forEach(th => {
   th.onclick = () => {
     const key = th.dataset.sort;
+    if (key === 'total_assessment' && rankingMode !== 'assessment') {
+      setRankingMode('assessment', true);
+      return;
+    }
+    if ((key === 'codingRank' || key === 'cp_score_num') && rankingMode !== 'cp') {
+      setRankingMode('cp', true);
+      return;
+    }
     if (currentSortKey === key) {
       sortDirection = sortDirection === 'desc' ? 'asc' : 'desc';
     } else {
