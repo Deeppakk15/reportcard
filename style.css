@@ -256,73 +256,6 @@ body {
 }
 
 /* ==========================================================================
-   RANKING NOTE SECTION (Red Highlighted)
-   ========================================================================== */
-.ranking-note-section {
-  background: rgba(239, 68, 68, 0.08);
-  border: 1px solid rgba(239, 68, 68, 0.4);
-  border-left: 3px solid #EF4444;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.ranking-note-summary {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  cursor: pointer;
-  list-style: none;
-  user-select: none;
-}
-
-.ranking-note-summary::-webkit-details-marker {
-  display: none;
-}
-
-.ranking-note-badge {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  padding: 2px 8px;
-  border-radius: 9999px;
-  background: rgba(239, 68, 68, 0.2);
-  border: 1px solid rgba(239, 68, 68, 0.55);
-  color: #FCA5A5;
-  flex-shrink: 0;
-}
-
-.ranking-note-heading {
-  font-size: 13px;
-  font-weight: 600;
-  color: #FECACA;
-}
-
-.ranking-note-chevron {
-  margin-left: auto;
-  font-size: 12px;
-  color: #FCA5A5;
-  transition: transform 0.2s ease;
-}
-
-.ranking-note-section[open] .ranking-note-chevron {
-  transform: rotate(180deg);
-}
-
-.ranking-note-body {
-  padding: 0 14px 12px;
-  font-size: 13px;
-  line-height: 1.55;
-  color: #FECACA;
-}
-
-.ranking-note-body strong {
-  color: #FFFFFF;
-  font-weight: 700;
-}
-
-/* ==========================================================================
    PODIUM SECTION (Top 3)
    ========================================================================== */
 .podium-section {
@@ -2024,20 +1957,6 @@ body {
   /* Masthead Mobile */
   .masthead {
     padding-bottom: 16px;
-  }
-
-  .ranking-note-summary {
-    padding: 8px 12px;
-    gap: 8px;
-  }
-
-  .ranking-note-heading {
-    font-size: 12px;
-  }
-
-  .ranking-note-body {
-    padding: 0 12px 10px;
-    font-size: 12px;
   }
 
   .masthead-top {
