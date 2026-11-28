@@ -636,15 +636,31 @@ function renderTable() {
 
     // Individual assessments (compact formatting for desktop table & mobile)
     const fmtScore = (val) => {
-      if (!val || val === '-' || hasValidUrl(val)) return '-';
-      const sVal = String(val).trim();
-      if (sVal.toUpperCase().startsWith('ABSENT')) return 'ABSENT';
-      return escapeHtml(sVal.replace(/\s*\/\s*/g, '/'));
+      if (!val || val === '-' || hasValidUrl(val)) return { text: '-', html: '-', title: '' };
+      const raw = String(val).trim();
+      const upper = raw.toUpperCase();
+      if (upper.startsWith('ABSENT')) {
+        return { text: 'ABSENT', html: 'ABSENT', title: raw };
+      }
+      if (upper.includes('NOT CONSIDERED') || upper.includes('[NC]')) {
+        const cleanNum = raw.replace(/\[[^\]]*\]/g, '').replace(/\s*\/\s*/g, '/').trim();
+        return {
+          text: `${cleanNum} [NC]`,
+          html: `${escapeHtml(cleanNum)}<span class="score-nc-tag">[NC]</span>`,
+          title: raw
+        };
+      }
+      const clean = escapeHtml(raw.replace(/\s*\/\s*/g, '/'));
+      return { text: clean, html: clean, title: raw };
     };
-    const a1Str = fmtScore(s.assessment1);
-    const a2Str = fmtScore(s.assessment2);
-    const a3Str = fmtScore(s.assessment3);
-    const a4Str = fmtScore(s.assessment4);
+    const a1Obj = fmtScore(s.assessment1);
+    const a2Obj = fmtScore(s.assessment2);
+    const a3Obj = fmtScore(s.assessment3);
+    const a4Obj = fmtScore(s.assessment4);
+    const a1Str = a1Obj.text;
+    const a2Str = a2Obj.text;
+    const a3Str = a3Obj.text;
+    const a4Str = a4Obj.text;
 
     // Branch and Group Ranks
     const branchRankStr = s.branchRank ? `#${s.branchRank}` : 'No Rank';
@@ -741,17 +757,17 @@ function renderTable() {
           </div>
         </div>
       </td>
-      <td class="col-a1 font-mono">
-        ${a1Str}
+      <td class="col-a1 font-mono" title="${escapeHtml(a1Obj.title)}">
+        ${a1Obj.html}
       </td>
-      <td class="col-a2 font-mono">
-        ${a2Str}
+      <td class="col-a2 font-mono" title="${escapeHtml(a2Obj.title)}">
+        ${a2Obj.html}
       </td>
-      <td class="col-a3 font-mono">
-        ${a3Str}
+      <td class="col-a3 font-mono" title="${escapeHtml(a3Obj.title)}">
+        ${a3Obj.html}
       </td>
-      <td class="col-a4 font-mono">
-        ${a4Str}
+      <td class="col-a4 font-mono" title="${escapeHtml(a4Obj.title)}">
+        ${a4Obj.html}
       </td>
       <td class="col-branch-rank font-mono">
         <span class="rank-sub-badge${isTopBranch}${branchActiveClass}" title="${branchRankTitle}">${branchRankStr}</span>
