@@ -130,6 +130,7 @@
             <option value="groupRank">Group Rank (Top &rarr; Low)</option>
             <option value="cp_score_num">CP Score (High &rarr; Low)</option>
             <option value="total_assessment">Total Assessment Marks (High &rarr; Low)</option>
+            <option value="assessment4_num">Assessment 4 Marks</option>
             <option value="assessment3_num">Assessment 3 Marks</option>
             <option value="assessment2_num">Assessment 2 Marks</option>
             <option value="assessment1_num">Assessment 1 Marks</option>
@@ -161,6 +162,7 @@
               <th class="col-a1 sortable" data-sort="assessment1_num">ASSESSMENT 1</th>
               <th class="col-a2 sortable" data-sort="assessment2_num">ASSESSMENT 2</th>
               <th class="col-a3 sortable" data-sort="assessment3_num">ASSESSMENT 3</th>
+              <th class="col-a4 sortable" data-sort="assessment4_num">ASSESSMENT 4</th>
               <th class="col-branch-rank sortable" data-sort="branchRank">BRANCH RANK</th>
               <th class="col-group-rank sortable" data-sort="groupRank">GROUP RANK</th>
             </tr>
@@ -276,7 +278,7 @@
               <span class="m-hero-label" id="mHeroTotalLabel">TOTAL ASSESSMENT SCORE</span>
               <div class="m-hero-number-wrap">
                 <span class="m-hero-score-val highlight-accent font-mono" id="mTotalScoreVal">--</span>
-                <span class="m-hero-score-max font-mono" id="mTotalScoreMax">/ 1500</span>
+                <span class="m-hero-score-max font-mono" id="mTotalScoreMax">/ 2000</span>
               </div>
             </div>
             <div class="m-hero-right">
@@ -303,6 +305,11 @@
             <div class="m-score-card" id="mA3Card">
               <span class="m-card-title">ASSESSMENT 3</span>
               <div class="m-card-score font-mono" id="mA3Val">--</div>
+              <span class="m-card-sub">Max: 500</span>
+            </div>
+            <div class="m-score-card" id="mA4Card">
+              <span class="m-card-title">ASSESSMENT 4</span>
+              <div class="m-card-score font-mono" id="mA4Val">--</div>
               <span class="m-card-sub">Max: 500</span>
             </div>
           </div>

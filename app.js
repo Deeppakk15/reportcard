@@ -91,12 +91,16 @@ function calculateAllRanks() {
   // Precalculate coding rank + effective assessment marks
   allStudents.forEach(s => {
     s.codingRank = parseCodingRank(s.coding_rank_num ?? s.collegeCodingRank);
+    const a1 = Number(s.assessment1_num || 0);
+    const a2 = Number(s.assessment2_num || 0);
+    const a3 = Number(s.assessment3_num || 0);
+    const a4 = Number(s.assessment4_num || 0);
     if (isExcludeA1) {
-      s.effectiveAssessment = (s.assessment2_num || 0) + (s.assessment3_num || 0);
-      s.maxAssessment = 1000;
-    } else {
-      s.effectiveAssessment = s.total_assessment || ((s.assessment1_num || 0) + (s.assessment2_num || 0) + (s.assessment3_num || 0));
+      s.effectiveAssessment = a2 + a3 + a4;
       s.maxAssessment = 1500;
+    } else {
+      s.effectiveAssessment = s.total_assessment || (a1 + a2 + a3 + a4);
+      s.maxAssessment = 2000;
     }
     // 1. Overall Batch Rank matches the original given Coding Rank (or null => No Rank)
     s.overallRank = s.codingRank;
@@ -202,8 +206,8 @@ function updateBatchMetrics(dataset) {
     statTotalStudents.textContent = dataset.length.toLocaleString();
   }
 
-  const maxPossible = isExcludeA1 ? 1000 : 1500;
-  const threshold75 = isExcludeA1 ? 750 : 1125;
+  const maxPossible = isExcludeA1 ? 1500 : 2000;
+  const threshold75 = isExcludeA1 ? 1125 : 1500;
 
   let highestScore = -1;
   let topStudent = null;
@@ -304,9 +308,12 @@ function applyFiltersAndSort() {
       }
     }
 
-    // Secondary tie-breakers: Assessment total, A3, A2, A1 (if not excluded), then Roll No
+    // Secondary tie-breakers: Assessment total, A4, A3, A2, A1 (if not excluded), then Roll No
     if ((b.effectiveAssessment || 0) !== (a.effectiveAssessment || 0) && currentSortKey !== 'total_assessment') {
       return (b.effectiveAssessment || 0) - (a.effectiveAssessment || 0);
+    }
+    if ((b.assessment4_num || 0) !== (a.assessment4_num || 0)) {
+      return (b.assessment4_num || 0) - (a.assessment4_num || 0);
     }
     if ((b.assessment3_num || 0) !== (a.assessment3_num || 0)) {
       return (b.assessment3_num || 0) - (a.assessment3_num || 0);
@@ -401,7 +408,7 @@ function renderSearchDropdown(query) {
 
   // Render top 15 matching rows vertically
   const rowsToRender = matches.slice(0, 15);
-  const maxPossible = isExcludeA1 ? 1000 : 1500;
+  const maxPossible = isExcludeA1 ? 1500 : 2000;
 
   rowsToRender.forEach(s => {
     const row = document.createElement('div');
@@ -452,7 +459,7 @@ function renderPodium(top3) {
   }
   document.getElementById('podiumSection').style.display = 'block';
 
-  const maxPossible = isExcludeA1 ? 1000 : 1500;
+  const maxPossible = isExcludeA1 ? 1500 : 2000;
   const ranks = ['1', '2', '3'];
   const rankLabels = ['1st Place', '2nd Place', '3rd Place'];
 
@@ -467,6 +474,7 @@ function renderPodium(top3) {
     const a1 = s.assessment1_num || 0;
     const a2 = s.assessment2_num || 0;
     const a3 = s.assessment3_num || 0;
+    const a4 = s.assessment4_num || 0;
     const cpDisplay = s.cpScore && s.cpScore !== '-' ? `${String(s.cpScore).replace('%', '')}%` : '0%';
 
     const a1Display = isExcludeA1 ? `<span class="score-excluded">${a1}</span>` : `${a1}`;
@@ -492,7 +500,7 @@ function renderPodium(top3) {
           <div class="podium-stat-val" style="font-size: 13px; color: var(--ink-primary); font-weight: 500;">
             ${totalA} / ${maxPossible}
           </div>
-          <div class="podium-stat-lbl">A1: ${a1Display} | A2: ${a2} | A3: ${a3}</div>
+          <div class="podium-stat-lbl">A1: ${a1Display} | A2: ${a2} | A3: ${a3} | A4: ${a4}</div>
         </div>
       </div>
     `;
@@ -507,7 +515,7 @@ function renderPodium(top3) {
 function renderTable() {
   rankingBody.innerHTML = '';
 
-  const maxPossible = isExcludeA1 ? 1000 : 1500;
+  const maxPossible = isExcludeA1 ? 1500 : 2000;
 
   // Dynamically update column headers
   const thA1 = document.querySelector('th[data-sort="assessment1_num"]');
@@ -517,14 +525,14 @@ function renderTable() {
   }
   const thTotal = document.querySelector('th[data-sort="total_assessment"]');
   if (thTotal) {
-    thTotal.textContent = isExcludeA1 ? 'TOTAL MARKS (/1000)' : 'TOTAL MARKS (/1500)';
+    thTotal.textContent = isExcludeA1 ? 'TOTAL MARKS (/1500)' : 'TOTAL MARKS (/2000)';
   }
 
   const total = filteredStudents.length;
   if (total === 0) {
     rankingBody.innerHTML = `
       <tr>
-        <td colspan="11" style="text-align: center; padding: 48px; color: var(--ink-muted);">
+        <td colspan="12" style="text-align: center; padding: 48px; color: var(--ink-muted);">
           No students found matching your criteria.
         </td>
       </tr>
@@ -561,6 +569,7 @@ function renderTable() {
     const a1Str = (s.assessment1 && s.assessment1 !== '-') ? escapeHtml(s.assessment1) : '-';
     const a2Str = (s.assessment2 && s.assessment2 !== '-') ? escapeHtml(s.assessment2) : '-';
     const a3Str = (s.assessment3 && s.assessment3 !== '-') ? escapeHtml(s.assessment3) : '-';
+    const a4Str = (s.assessment4 && !hasValidUrl(s.assessment4) && s.assessment4 !== '-') ? escapeHtml(s.assessment4) : '-';
 
     const a1CellHtml = isExcludeA1 
       ? `<span class="score-excluded" title="Assessment 1 Excluded">${a1Str}</span>` 
@@ -625,6 +634,8 @@ function renderTable() {
             <span class="mob-score-val">A2: ${a2Str}</span>
             <span class="mob-score-sep">|</span>
             <span class="mob-score-val">A3: ${a3Str}</span>
+            <span class="mob-score-sep">|</span>
+            <span class="mob-score-val">A4: ${a4Str}</span>
           </div>
         </div>
       </td>
@@ -661,6 +672,9 @@ function renderTable() {
       </td>
       <td class="col-a3 font-mono">
         ${a3Str}
+      </td>
+      <td class="col-a4 font-mono">
+        ${a4Str}
       </td>
       <td class="col-branch-rank font-mono">
         <span class="rank-sub-badge${isTopBranch}" title="${branchRankTitle}">${branchRankStr}</span>
@@ -710,7 +724,7 @@ function openStudentModal(s) {
   if (mGroupPill) mGroupPill.textContent = s.resolvedGroup || s.cycle1 || s.cycle2 || 'Training Section';
 
   // Hero total score card
-  const maxPossible = isExcludeA1 ? 1000 : 1500;
+  const maxPossible = isExcludeA1 ? 1500 : 2000;
   const totalScore = s.effectiveAssessment || 0;
   const pct = ((totalScore / maxPossible) * 100).toFixed(1);
   const barWidth = Math.min(Math.max((totalScore / maxPossible) * 100, 0), 100);
@@ -732,7 +746,7 @@ function openStudentModal(s) {
   const mTotalBar = document.getElementById('mTotalScoreBar');
   if (mTotalBar) mTotalBar.style.width = `${barWidth}%`;
 
-  // Assessment cards (A1, A2, A3)
+  // Assessment cards (A1, A2, A3, A4)
   const a1Card = document.getElementById('mA1Card');
   if (a1Card) a1Card.classList.toggle('is-excluded', isExcludeA1);
 
@@ -747,6 +761,9 @@ function openStudentModal(s) {
 
   const a3Val = document.getElementById('mA3Val');
   if (a3Val) a3Val.textContent = (s.assessment3 && s.assessment3 !== '-') ? s.assessment3 : '-';
+
+  const a4Val = document.getElementById('mA4Val');
+  if (a4Val) a4Val.textContent = (s.assessment4 && !hasValidUrl(s.assessment4) && s.assessment4 !== '-') ? s.assessment4 : '-';
 
   // Cohort rank cards (recalculated from original Coding Rank; both overall & coding rank match)
   const mOverallRank = document.getElementById('mOverallRankVal');
@@ -795,8 +812,9 @@ function openStudentModal(s) {
   const profilesList = document.getElementById('modalProfilesList');
   if (profilesList) {
     profilesList.innerHTML = '';
-    if (hasValidUrl(s.assessment4)) {
-      profilesList.innerHTML += `<a href="${escapeHtml(s.assessment4)}" target="_blank" class="profile-link-btn" style="color: #FFA116;">LeetCode Profile &nearr;</a>`;
+    const lcUrl = hasValidUrl(s.leetcode_url) ? s.leetcode_url : (hasValidUrl(s.assessment4) ? s.assessment4 : null);
+    if (lcUrl) {
+      profilesList.innerHTML += `<a href="${escapeHtml(lcUrl)}" target="_blank" class="profile-link-btn" style="color: #FFA116;">LeetCode Profile &nearr;</a>`;
     }
     if (hasValidUrl(s.assessment5)) {
       profilesList.innerHTML += `<a href="${escapeHtml(s.assessment5)}" target="_blank" class="profile-link-btn" style="color: #3B82F6;">Codeforces Profile &nearr;</a>`;

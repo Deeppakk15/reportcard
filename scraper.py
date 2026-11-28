@@ -56,10 +56,17 @@ def fetch_single(roll_no, retries=3):
                             a1 = parse_score(st.get("assessment1"))
                             a2 = parse_score(st.get("assessment2"))
                             a3 = parse_score(st.get("assessment3"))
+                            raw_a4 = str(st.get("assessment4") or "").strip()
+                            if raw_a4.startswith("http://") or raw_a4.startswith("https://"):
+                                a4 = 0.0
+                                st["leetcode_url"] = raw_a4
+                            else:
+                                a4 = parse_score(raw_a4)
                             st["assessment1_num"] = a1
                             st["assessment2_num"] = a2
                             st["assessment3_num"] = a3
-                            st["total_assessment"] = a1 + a2 + a3
+                            st["assessment4_num"] = a4
+                            st["total_assessment"] = a1 + a2 + a3 + a4
                             st["cp_score_num"] = parse_score(st.get("cpScore"))
                             st["comm_score_num"] = parse_score(st.get("communicationScore"))
                             st["odd_attendance_num"] = parse_score(st.get("oddAttendance"))
@@ -134,6 +141,11 @@ def scrape_branches(branch_configs, refresh=False):
             checked_count += 1
             st = future.result()
             if st and st.get("name"):
+                prev = all_students_dict.get(st["rollNo"])
+                if prev and not st.get("leetcode_url"):
+                    prev_lc = prev.get("leetcode_url") or prev.get("assessment4")
+                    if isinstance(prev_lc, str) and (prev_lc.startswith("http://") or prev_lc.startswith("https://")):
+                        st["leetcode_url"] = prev_lc
                 all_students_dict[st["rollNo"]] = st
                 updated_count += 1
                 if updated_count % 50 == 0:

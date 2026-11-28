@@ -1046,7 +1046,7 @@ body {
   min-width: 140px;
 }
 
-.col-a1, .col-a2, .col-a3 {
+.col-a1, .col-a2, .col-a3, .col-a4 {
   min-width: 110px;
   font-family: var(--font-mono);
   font-size: 12px;
@@ -1539,10 +1539,10 @@ body {
   margin-bottom: 8px;
 }
 
-/* Assessment Breakdown Cards (3-column) */
+/* Assessment Breakdown Cards (4-column) */
 .modal-score-cards-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
   margin-bottom: 16px;
 }
@@ -2245,6 +2245,7 @@ body {
   .ranking-table td.col-a1,
   .ranking-table td.col-a2,
   .ranking-table td.col-a3,
+  .ranking-table td.col-a4,
   .ranking-table td.col-branch-rank,
   .ranking-table td.col-group-rank,
   .ranking-table td.col-actions {
@@ -2379,7 +2380,8 @@ body {
   .mob-scores-row {
     display: flex;
     align-items: center;
-    gap: 6px;
+    flex-wrap: wrap;
+    gap: 3px 6px;
     font-size: 10px;
     color: var(--ink-muted);
     padding-top: 3px;
@@ -2494,7 +2496,12 @@ body {
     margin-bottom: 5px;
   }
 
-  .modal-score-cards-grid,
+  .modal-score-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
   .modal-rank-cards-grid,
   .modal-meta-row {
     grid-template-columns: repeat(3, 1fr);
@@ -2601,7 +2608,11 @@ body {
     grid-column: span 1;
   }
 
-  .modal-score-cards-grid,
+  .modal-score-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4px;
+  }
+
   .modal-rank-cards-grid,
   .modal-meta-row {
     grid-template-columns: repeat(3, 1fr);

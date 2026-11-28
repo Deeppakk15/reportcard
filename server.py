@@ -51,10 +51,17 @@ def live_fetch(roll_no):
                         a1 = parse_num(st.get("assessment1"))
                         a2 = parse_num(st.get("assessment2"))
                         a3 = parse_num(st.get("assessment3"))
+                        raw_a4 = str(st.get("assessment4") or "").strip()
+                        if raw_a4.startswith("http://") or raw_a4.startswith("https://"):
+                            a4 = 0.0
+                            st["leetcode_url"] = raw_a4
+                        else:
+                            a4 = parse_num(raw_a4)
                         st["assessment1_num"] = a1
                         st["assessment2_num"] = a2
                         st["assessment3_num"] = a3
-                        st["total_assessment"] = a1 + a2 + a3
+                        st["assessment4_num"] = a4
+                        st["total_assessment"] = a1 + a2 + a3 + a4
                         st["cp_score_num"] = parse_num(st.get("cpScore"))
                         st["comm_score_num"] = parse_num(st.get("communicationScore"))
                         st["odd_attendance_num"] = parse_num(st.get("oddAttendance"))
