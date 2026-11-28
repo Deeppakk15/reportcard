@@ -159,9 +159,14 @@ function calculateAllRanks() {
   });
 
   // 3. Group Rank
+  const isValidGroupVal = (val) => {
+    if (!val) return false;
+    const str = String(val).trim();
+    return str !== '' && str !== '-' && !str.startsWith('#');
+  };
   const groupMap = {};
   allStudents.forEach(s => {
-    const g = (s.cycle1 && s.cycle1 !== '-') ? s.cycle1 : ((s.cycle2 && s.cycle2 !== '-') ? s.cycle2 : 'Unassigned');
+    const g = isValidGroupVal(s.cycle1) ? String(s.cycle1).trim() : (isValidGroupVal(s.cycle2) ? String(s.cycle2).trim() : 'Unassigned');
     s.resolvedGroup = g;
     if (!groupMap[g]) groupMap[g] = [];
     groupMap[g].push(s);
@@ -216,7 +221,7 @@ async function init() {
 function populateGroupFilter() {
   const groups = new Set();
   allStudents.forEach(s => {
-    if (s.resolvedGroup && s.resolvedGroup !== 'Unassigned') {
+    if (s.resolvedGroup && s.resolvedGroup !== 'Unassigned' && !String(s.resolvedGroup).startsWith('#')) {
       groups.add(s.resolvedGroup);
     }
   });
@@ -302,9 +307,9 @@ function applyFiltersAndSort() {
 
     // Group Filter
     if (currentGroup !== 'ALL') {
-      const c1 = s.cycle1 || '';
-      const c2 = s.cycle2 || '';
-      if (c1 !== currentGroup && c2 !== currentGroup) {
+      const c1 = s.cycle1 && !String(s.cycle1).startsWith('#') ? s.cycle1 : '';
+      const c2 = s.cycle2 && !String(s.cycle2).startsWith('#') ? s.cycle2 : '';
+      if (s.resolvedGroup !== currentGroup && c1 !== currentGroup && c2 !== currentGroup) {
         return false;
       }
     }
@@ -459,7 +464,7 @@ function renderSearchDropdown(query) {
     };
 
     const branchClass = `branch-${s.branch || ''}`;
-    const groupText = s.cycle1 ? `28ACSE Section ${s.cycle1}` : (s.cycle2 ? `28ACSE Section ${s.cycle2}` : '');
+    const groupText = s.resolvedGroup && s.resolvedGroup !== 'Unassigned' ? s.resolvedGroup : '';
     const cpNum = Number(s.cp_score_num || 0);
     const cpDisplay = s.cpScore && s.cpScore !== '-' ? `${String(s.cpScore).replace('%', '')}%` : '0%';
     const scoreVal = s.effectiveAssessment || 0;
